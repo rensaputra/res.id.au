@@ -247,6 +247,10 @@ const config: Config = {
               label: "DVA-C02",
               to: "/docs/developer-associate/section-1-course-introduction/course-introduction",
             },
+            {
+              label: "TA-004 (In Progress)",
+              to: "/docs/terraform-associate/introduction/course-introduction",
+            },
           ],
         },
         {
