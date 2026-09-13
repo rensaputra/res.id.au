@@ -7,8 +7,8 @@ import rehypeKatex from "rehype-katex";
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: "Rendy's AWS Notes",
-  tagline: "Because AWS is a spaghetti ball",
+  title: "Rendy E. Saputra's Site",
+  tagline: "Learning, documenting, and building",
 
   headTags: [
     {
@@ -19,9 +19,9 @@ const config: Config = {
       innerHTML: JSON.stringify({
         "@context": "https://schema.org/",
         "@type": "WebSite",
-        name: "Rendy's AWS Notes",
+        name: "Rendy E. Saputra's Site",
         url: "https://res.id.au/",
-        alternateName: ["Rendy E. Saputra's Site", "Rendy's AWS Notes"],
+        alternateName: ["Rendy E. Saputra", "Rendy E. Saputra's Portfolio"],
         potentialAction: {
           "@type": "SearchAction",
           target: "https://res.id.au/search?q={search_term_string}",
@@ -178,14 +178,13 @@ const config: Config = {
       {
         name: "description",
         content:
-          "This is Rendy E Saputra's Site. Rendy is a Software Engineer working on TypeScript, AWS, React, Node.js, Java and more.",
+          "Personal portfolio and technical notes of Rendy E. Saputra, a Software Engineer focusing on TypeScript, AWS, React, Node.js, and Java.",
       },
       {
         name: "keywords",
         content:
-          "Rendy, Eka, Saputra, AWS, TypeScript, React, Software Engineer, Java",
+          "Rendy E. Saputra, Software Engineer, Portfolio, Technical Notes, TypeScript, AWS, React, Node.js, Java, Cloud Computing",
       },
-      { property: "og:site_name", content: "Rendy's AWS Notes" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "author", content: "Rendy E. Saputra" },
@@ -201,7 +200,7 @@ const config: Config = {
     navbar: {
       title: "Home",
       logo: {
-        alt: "Rendy's AWS Notes",
+        alt: "Rendy E. Saputra's Site",
         src: "img/wolf.svg",
       },
       items: [
