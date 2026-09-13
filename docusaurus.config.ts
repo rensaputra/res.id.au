@@ -131,6 +131,23 @@ const config: Config = {
         },
       };
     },
+    async function gzipPlugin(context, options) {
+      return {
+        name: "docusaurus-gzip",
+        configureWebpack(config, isServer, utils) {
+          return {
+            plugins: [
+              new (require("compression-webpack-plugin"))({
+                algorithm: "gzip",
+                test: /\.(js|css|svg)$/,
+                threshold: 10240,
+                minRatio: 0.8,
+              }),
+            ],
+          };
+        },
+      };
+    },
   ],
 
   presets: [

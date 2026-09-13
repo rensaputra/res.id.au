@@ -34,6 +34,12 @@ npm run build
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
 
+### Gzip Pre-Compression
+
+During the build process, the configuration leverages `compression-webpack-plugin` to generate pre-compressed `.gz` versions of your text-based assets (e.g., `.html`, `.css`, `.js`).
+
+This pre-compression works on a file-by-file basis rather than creating a single massive zip file. The output directory will contain both the original files and their `.gz` equivalents. When hosting these static assets, if a user's browser requests a file and signals that it supports Gzip (via the `Accept-Encoding: gzip` HTTP header), the web server can serve the pre-compressed `.gz` file directly, significantly reducing response times and bandwidth usage without CPU overhead on the server.
+
 ## Deployment
 
 Using SSH:
