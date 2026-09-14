@@ -40,7 +40,7 @@ export default function Hero() {
           proud dad.
         </p>
       </div>
-      <div className="flex justify-center mt-4 space-x-4">
+      <div className="flex flex-col items-center justify-center mt-4 space-y-3 md:flex-row md:space-x-4 md:space-y-0">
         <Link to="/docs/intro" className="button button--secondary button--lg">
           My Tech 📝
         </Link>
