@@ -7,7 +7,7 @@ import rehypeKatex from "rehype-katex";
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: "Rendy E. Saputra's Site",
+  title: "Rendy E. Saputra (RES)",
   tagline: "Learning, documenting, and building",
 
   headTags: [
@@ -22,7 +22,7 @@ const config: Config = {
           {
             "@type": "WebSite",
             "@id": "https://res.id.au/#website",
-            name: "Rendy E. Saputra's Site",
+            name: "Rendy E. Saputra (RES)",
             url: "https://res.id.au/",
             alternateName: ["Rendy E. Saputra", "Rendy E. Saputra's Portfolio"],
             publisher: { "@id": "https://res.id.au/#person" },
