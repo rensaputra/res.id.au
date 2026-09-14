@@ -11,17 +11,10 @@
   text-align: center;
 }
 
-.button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  background-color: #2563eb;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
+.button-primary {
+  @apply inline-flex items-center justify-center bg-[#ff9900] hover:bg-[#fa6f00] text-black font-semibold px-8 py-2 rounded-full hover:text-black;
 }
 
-.button:hover {
-  color: white;
-  background-color: #1d4ed8;
+.button-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-white hover:bg-blue-700;
 }
