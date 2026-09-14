@@ -2,11 +2,11 @@
   color: #50a2ff;
 }
 
-h1 {
+.hero h1 {
   color: white;
 }
 
-header p {
+.hero p {
   color: rgba(236, 233, 233, 0.9);
   text-align: center;
 }
