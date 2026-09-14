@@ -16,7 +16,7 @@
 :root {
   /* AWS Typography and Styling */
   --ifm-font-family-base:
-    "Amazon Ember", "Helvetica Neue", Roboto, Arial, sans-serif;
+    "Inter", "Helvetica Neue", Roboto, Arial, sans-serif;
   --ifm-global-radius: 2px;
   --ifm-heading-color: #16191f;
   --ifm-font-color-base: #16191f;
