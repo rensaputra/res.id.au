@@ -107,6 +107,7 @@
     "AKIAI",
     "AKIAIOSFODNN",
     "ALBSG",
+    "APUTRA",
     "ASIAIOSFODNN",
     "AUCROC",
     "AWSALB",
@@ -132,6 +133,7 @@
     "FGAC",
     "GENEVE",
     "Goreng",
+    "HCTA",
     "HDFS",
     "HDNTW",
     "HITL",
@@ -139,6 +141,7 @@
     "HVMG",
     "Halluc",
     "IMDS",
+    "Imam",
     "JMES",
     "Kend",
     "Kiro",
@@ -179,6 +182,7 @@
     "Sanji",
     "Saputra",
     "Sedol",
+    "Shafi'i",
     "Somni",
     "TOTP",
     "TTFT",
@@ -239,9 +243,6 @@
     "texttt",
     "vous",
     "yourdomain",
-    "yourname",
-    "HCTA",
-    "Imam",
-    "Shafi'i"
+    "yourname"
   ]
 }
