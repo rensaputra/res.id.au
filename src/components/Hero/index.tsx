@@ -8,7 +8,12 @@ export default function Hero() {
   const avatarUrl = useBaseUrl("/images/ava.jpg");
 
   return (
-    <header className="py-8 bg-gradient-to-r from-[#1b2733] to-[#442d34]">
+    <header
+      className={clsx(
+        styles.hero,
+        "py-8 bg-gradient-to-r from-[#1b2733] to-[#442d34]",
+      )}
+    >
       <div className="max-w-4xl mx-auto px-4 text-center">
         <div className="flex flex-col items-center justify-center">
           <div className="h-32 w-32 overflow-hidden rounded-full border-2 border-white mb-4">
