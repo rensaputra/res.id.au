@@ -11,32 +11,29 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: "AWS Developer",
-    Svg: require("@site/static/img/undraw_aws_server.svg").default,
+    title: "Technical Portfolio",
+    Svg: require("@site/static/img/undraw_code_typing.svg").default,
     description: (
       <>
-        Comprehensive notes covering design resilient architectures,
-        high-performing architectures, and secure applications on AWS.
+        Explore my professional background, showcase of past projects, and hands-on experience in software engineering and cloud architecture.
       </>
     ),
   },
   {
-    title: "Exam-Oriented",
-    Svg: require("@site/static/img/undraw_certification.svg").default,
+    title: "Extensive Documentation",
+    Svg: require("@site/static/img/undraw_files.svg").default,
     description: (
       <>
-        Structured to align with the DVA-C02 exam domains: compute, storage,
-        data lakes, and security. Go ahead and explore each section.
+        Deep dive into detailed technical guides, tutorials, and structured notes on AWS, React, Node.js, and more.
       </>
     ),
   },
   {
-    title: "Community Driven",
+    title: "Open Knowledge",
     Svg: require("@site/static/img/undraw_community.svg").default,
     description: (
       <>
-        Built as open notes from my learning journey. Contributions and
-        corrections are welcome — we grow together.
+        Built on the principle of sharing knowledge. All documentation is open source—contributions and feedback are always welcome.
       </>
     ),
   },
