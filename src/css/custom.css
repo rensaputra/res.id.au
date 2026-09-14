@@ -121,11 +121,7 @@ a:hover {
   @apply text-[12px] leading-[16px] tracking-[0.005em] text-[#c6c6cd];
 }
 
-/* Force footer links to wrap into a new column after 3 items */
-.footer__items {
-  display: grid;
-  grid-template-rows: repeat(3, max-content);
-  grid-auto-flow: column;
-  column-gap: 2rem;
-  justify-content: start;
+/* Center the footer link columns */
+.footer__links {
+  @apply justify-center;
 }
