@@ -22,7 +22,7 @@ export default function Hero() {
           </div>
           <h1
             className={clsx(
-              "mb-0 text-2xl font-bold leading-tight tracking-wider",
+              "mb-0 text-3xl font-bold leading-tight tracking-wider",
             )}
           >
             <span className={styles.initial}>R</span>ENDY{" "}
