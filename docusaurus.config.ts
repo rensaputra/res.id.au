@@ -18,15 +18,33 @@ const config: Config = {
       },
       innerHTML: JSON.stringify({
         "@context": "https://schema.org/",
-        "@type": "WebSite",
-        name: "Rendy E. Saputra's Site",
-        url: "https://res.id.au/",
-        alternateName: ["Rendy E. Saputra", "Rendy E. Saputra's Portfolio"],
-        potentialAction: {
-          "@type": "SearchAction",
-          target: "https://res.id.au/search?q={search_term_string}",
-          "query-input": "required name=search_term_string",
-        },
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://res.id.au/#website",
+            name: "Rendy E. Saputra's Site",
+            url: "https://res.id.au/",
+            alternateName: ["Rendy E. Saputra", "Rendy E. Saputra's Portfolio"],
+            publisher: { "@id": "https://res.id.au/#person" },
+            potentialAction: {
+              "@type": "SearchAction",
+              target: "https://res.id.au/search?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          },
+          {
+            "@type": "Person",
+            "@id": "https://res.id.au/#person",
+            name: "Rendy E. Saputra",
+            url: "https://res.id.au/",
+            image: "https://res.id.au/images/ava.jpg",
+            jobTitle: "Software Engineer",
+            sameAs: [
+              "https://github.com/rensaputra",
+              "https://www.linkedin.com/in/rendyekasaputra/",
+            ],
+          },
+        ],
       }),
     },
     {
