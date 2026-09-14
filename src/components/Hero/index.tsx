@@ -46,14 +46,14 @@ export default function Hero() {
         </p>
       </div>
       <div className="flex flex-col items-center justify-center mt-4 space-y-3 md:flex-row md:space-x-4 md:space-y-0">
-        <Link to="/docs/intro" className="button button--secondary button--lg">
+        <Link to="/docs/intro" className={clsx(styles["button-primary"])}>
           My Tech 📝
         </Link>
         <a
           href="https://github.com/rensaputra"
           target="_blank"
           rel="noopener noreferrer"
-          className={clsx(styles.button, "inline-flex items-center gap-2")}
+          className={clsx(styles["button-secondary"])}
         >
           <svg
             viewBox="0 0 496 512"
@@ -72,7 +72,7 @@ export default function Hero() {
           href="https://www.linkedin.com/in/rendyekasaputra/"
           target="_blank"
           rel="noopener noreferrer"
-          className={styles.button}
+          className={clsx(styles["button-secondary"])}
         >
           <svg
             viewBox="0 0 448 512"
