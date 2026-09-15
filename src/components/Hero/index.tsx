@@ -16,7 +16,7 @@ export default function Hero() {
     >
       <div className="max-w-4xl mx-auto px-4 text-center">
         <div className="flex flex-col items-center justify-center">
-          <div className="h-32 w-32 overflow-hidden rounded-full border-2 border-white mb-4">
+          <div className="h-32 w-32 overflow-hidden rounded-full border-2 border-white mb-4 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]">
             <img
               src={avatarUrl}
               alt="Rendy Eka Saputra"

@@ -12,9 +12,9 @@
 }
 
 .button-primary {
-  @apply inline-flex items-center justify-center bg-[#ff9900] hover:bg-[#fa6f00] text-black font-semibold px-8 py-2 rounded-full hover:text-black;
+  @apply inline-flex items-center justify-center bg-[#ff9900] hover:bg-[#fa6f00] text-black font-semibold px-8 py-2 rounded-full hover:text-black transition-all duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff9900] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1b2733];
 }
 
 .button-secondary {
-  @apply inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-white hover:bg-blue-700;
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-[#0073bb] px-4 py-2 text-white hover:bg-[#005a93] transition-all duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073bb] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1b2733];
 }
