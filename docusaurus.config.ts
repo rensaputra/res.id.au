@@ -7,9 +7,8 @@ import rehypeKatex from "rehype-katex";
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: "Rendy E. Saputra (RES)",
+  title: "Rendy Eka Saputra (RES)",
   tagline: "Learning, documenting, and building",
-
 
   headTags: [
     {
@@ -45,9 +44,12 @@ const config: Config = {
           {
             "@type": "WebSite",
             "@id": "https://res.id.au/#website",
-            name: "Rendy E. Saputra (RES)",
+            name: "Rendy Eka Saputra (RES)",
             url: "https://res.id.au/",
-            alternateName: ["Rendy E. Saputra", "Rendy E. Saputra's Portfolio"],
+            alternateName: [
+              "Rendy Eka Saputra",
+              "Rendy Eka Saputra's Portfolio",
+            ],
             publisher: { "@id": "https://res.id.au/#person" },
             potentialAction: {
               "@type": "SearchAction",
@@ -58,7 +60,7 @@ const config: Config = {
           {
             "@type": "Person",
             "@id": "https://res.id.au/#person",
-            name: "Rendy E. Saputra",
+            name: "Rendy Eka Saputra",
             url: "https://res.id.au/",
             image: "https://res.id.au/images/ava.jpg",
             jobTitle: "Software Engineer",
@@ -219,7 +221,7 @@ const config: Config = {
       {
         name: "description",
         content:
-          "Personal portfolio and technical notes of Rendy E. Saputra, a Software Engineer focusing on TypeScript, AWS, React, Node.js, and Java.",
+          "Personal portfolio and technical notes of Rendy Eka Saputra, a Software Engineer focusing on TypeScript, AWS, React, Node.js, and Java.",
       },
       {
         name: "keywords",
