@@ -49,11 +49,11 @@ export default function Hero() {
           proud dad.
         </p>
       </div>
-      <div className="flex flex-col items-center justify-center mt-4 space-y-3 md:flex-row md:space-x-4 md:space-y-0">
+      <div className="flex flex-col items-center justify-center mt-4 space-y-3 md:flex-row md:space-x-3 md:space-y-0">
         <Link to="/docs/intro" className={clsx(styles["button-primary"])}>
           My Tech 📝
         </Link>
-        <span className="flex flex-row items-center justify-center space-x-4">
+        <span className="flex flex-row items-center justify-center space-x-3">
           <a
             href="https://github.com/rensaputra"
             target="_blank"
