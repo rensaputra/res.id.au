@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: read
 
 concurrency:
   group: deploy-gh-pages
@@ -57,11 +58,22 @@ jobs:
           fetch-depth: 1
 
       - name: Preserve PR previews and CNAME
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -d "gh-pages-branch" ]; then
             if ls gh-pages-branch/pr-* 1> /dev/null 2>&1; then
-              echo "Found PR previews, copying to build directory..."
-              cp -r gh-pages-branch/pr-* ./build/
+              echo "Found PR previews, checking which PRs are still open..."
+              OPEN_PRS=$(gh pr list --state open --json number --jq '.[].number')
+              for pr_dir in gh-pages-branch/pr-*; do
+                pr_num=$(basename "$pr_dir" | sed 's/pr-//')
+                if echo "$OPEN_PRS" | grep -q "^${pr_num}$"; then
+                  echo "PR #${pr_num} is open, copying preview..."
+                  cp -r "$pr_dir" ./build/
+                else
+                  echo "PR #${pr_num} is closed or merged, discarding preview."
+                fi
+              done
             else
               echo "No PR previews found."
             fi
