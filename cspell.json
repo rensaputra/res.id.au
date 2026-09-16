@@ -93,6 +93,7 @@
     "unvetted",
     "viseme",
     "voiceovers",
+    "WORA",
     "xlarge"
   ],
   "ignorePaths": [
@@ -216,6 +217,8 @@
     "fileb",
     "healthcheck",
     "idpresponse",
+    "invokevirtual",
+    "javac",
     "jdbc",
     "kubelet",
     "lambdarole",
@@ -234,6 +237,7 @@
     "npmjs",
     "pgvec",
     "pgvector",
+    "println",
     "pypi",
     "qbusiness",
     "rekn",
