@@ -74,7 +74,7 @@ export default function Hero() {
             GitHub
           </a>
           <a
-            href="https://www.linkedin.com/in/rendyekasaputra/"
+            href="https://linkedin.com/in/rendyekasaputra/"
             target="_blank"
             rel="noopener noreferrer"
             className={clsx(styles["button-secondary"])}
