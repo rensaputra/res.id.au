@@ -217,6 +217,7 @@
     "fileb",
     "healthcheck",
     "idpresponse",
+    "invokevirtual",
     "javac",
     "jdbc",
     "kubelet",
