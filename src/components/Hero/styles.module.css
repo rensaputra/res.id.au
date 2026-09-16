@@ -11,9 +11,9 @@
 }
 
 .button-primary {
-  @apply inline-flex items-center justify-center bg-[#ff9900] hover:bg-[#fa6f00] text-black font-semibold px-8 py-2 rounded-full hover:text-black;
+  @apply inline-flex items-center justify-center bg-blue-800 hover:bg-blue-900 text-[#f7f7fe] font-semibold px-4 py-2 rounded-full hover:text-[#f7f7fe];
 }
 
 .button-secondary {
-  @apply inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 hover:text-white;
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-[#1e293b]/50 border border-solid border-neutral-400 px-4 py-2 text-white hover:bg-[#1e293b]/70 hover:border-neutral-300 hover:text-white;
 }

@@ -3,6 +3,7 @@ import styles from "./styles.module.css";
 import clsx from "clsx";
 import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
 
 export default function Hero() {
   const avatarUrl = useBaseUrl("/images/ava.jpg");
@@ -51,7 +52,8 @@ export default function Hero() {
       </div>
       <div className="flex flex-col items-center justify-center mt-4 space-y-3 md:flex-row md:space-x-3 md:space-y-0">
         <Link to="/docs/intro" className={clsx(styles["button-primary"])}>
-          My Tech 📝
+          Read Docs
+          <ChevronRightIcon className="ml-2 h-5 w-5" aria-hidden="true" />
         </Link>
         <span className="flex flex-row items-center justify-center space-x-3">
           <a
