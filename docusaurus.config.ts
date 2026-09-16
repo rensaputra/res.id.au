@@ -293,6 +293,10 @@ const config: Config = {
               label: "TA-004 (In Progress)",
               to: "/docs/terraform-associate/introduction/course-introduction",
             },
+            {
+              label: "Java Professional",
+              to: "/docs/java-professional/intro",
+            },
           ],
         },
         {
