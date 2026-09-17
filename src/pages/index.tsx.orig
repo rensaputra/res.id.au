@@ -1,0 +1,21 @@
+import type { ReactNode } from 'react';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import Layout from '@theme/Layout';
+import HomepageFeatures from '@site/src/components/HomepageFeatures';
+<<<<<<< HEAD
+// import HomepageHeader from '@site/src/components/HomepageHeader';
+=======
+>>>>>>> 17c472e8cc456fa5269148e7777c8e7d717c5f3a
+import Hero from '@site/src/components/Hero';
+
+export default function Home(): ReactNode {
+  const { siteConfig } = useDocusaurusContext();
+  return (
+    <Layout title={`${siteConfig.title}`}>
+      <Hero />
+      <main>
+        <HomepageFeatures />
+      </main>
+    </Layout>
+  );
+}
