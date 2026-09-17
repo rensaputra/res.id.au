@@ -1,26 +1,26 @@
 ---
 sidebar_position: 27
 title: Scenarios for Security
-description: "Applied Security Scenarios: Bedrock Encrypted S3 Access, PrivateLink Networking & CloudTrail Authorization Auditing"
+description: 'Applied Security Scenarios: Bedrock Encrypted S3 Access, PrivateLink Networking & CloudTrail Authorization Auditing'
 keywords:
   [
-    "AWS Certified AI Practitioner",
-    "AIF-C01",
-    "Bedrock",
-    "SageMaker",
-    "PrivateLink",
-    "VPC Endpoints",
-    "CloudTrail",
-    "KMS",
-    "IAM",
+    'AWS Certified AI Practitioner',
+    'AIF-C01',
+    'Bedrock',
+    'SageMaker',
+    'PrivateLink',
+    'VPC Endpoints',
+    'CloudTrail',
+    'KMS',
+    'IAM',
   ]
 ---
 
-import ImageRow from "@site/src/components/ImageRow";
-import VPCEndpointDefenseInDepth from "./img/vpc-endpoint-defense-in-depth.png";
-import AccessBedrockModel from "./img/access-bedrock-model-diagram.png";
-import CloudTrailAccessDenied from "./img/cloudtrail-access-denied.png";
-import CloudTrailAccessAuthorized from "./img/cloudtrail-access-authorized.png";
+import ImageRow from '@site/src/components/ImageRow';
+import VPCEndpointDefenseInDepth from './img/vpc-endpoint-defense-in-depth.png';
+import AccessBedrockModel from './img/access-bedrock-model-diagram.png';
+import CloudTrailAccessDenied from './img/cloudtrail-access-denied.png';
+import CloudTrailAccessAuthorized from './img/cloudtrail-access-authorized.png';
 
 # Applied Security Scenarios: Bedrock Encrypted S3 Access, PrivateLink Networking & CloudTrail Authorization Auditing
 
@@ -84,25 +84,13 @@ Key takeaways to master:
   2. **VPC Endpoint Policies:** JSON resource policies attached to the endpoint itself that limit which IAM principals can access which specific AWS resource ARNs.
   3. **IAM Roles:** Identity-based policies attached to the invoking compute resource (EC2, Lambda, or SageMaker).
      <ImageRow>
-       <img
-         src={VPCEndpointDefenseInDepth}
-         alt="Deploy SageMaker Model in your VPC"
-       />
-       <img
-         src={AccessBedrockModel}
-         alt="Bedrock Model Access using an APP in VPC"
-       />
+       <img src={VPCEndpointDefenseInDepth} alt="Deploy SageMaker Model in your VPC" />
+       <img src={AccessBedrockModel} alt="Bedrock Model Access using an APP in VPC" />
      </ImageRow>
 - **CloudTrail Captures Both Successes and Denials:** CloudTrail intercepts and logs **all API calls**, including unsuccessful, unauthorized requests resulting in `AccessDenied` (`403 Forbidden`). This makes CloudTrail a primary tool for detecting reconnaissance or unauthorized access attempts against AI services.
   <ImageRow>
-    <img
-      src={CloudTrailAccessAuthorized}
-      alt="CloudTrail captures Authorized events"
-    />
-    <img
-      src={CloudTrailAccessDenied}
-      alt="CloudTrail captures AccessDenied events"
-    />
+    <img src={CloudTrailAccessAuthorized} alt="CloudTrail captures Authorized events" />
+    <img src={CloudTrailAccessDenied} alt="CloudTrail captures AccessDenied events" />
   </ImageRow>
 
 ---

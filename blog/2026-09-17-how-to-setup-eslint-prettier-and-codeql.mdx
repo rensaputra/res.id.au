@@ -1,0 +1,159 @@
+---
+title: How to setup Eslint, Prettier and CodeQL
+authors: [rendy]
+tags: [react, typescript]
+slug: how-to-setup-eslint-prettier-and-codeql
+---
+
+{/* truncate */}
+
+## Intro
+
+In modern web development, maintaining a clean, secure, and consistent codebase is paramount, especially when working on teams. This is where tools like ESLint, Prettier, and CodeQL come in.
+
+- **ESLint** is a powerful static code analysis tool that finds and fixes problems in your JavaScript or TypeScript code. It ensures that your code adheres to specific stylistic guidelines and catches potential runtime errors before the code is even executed.
+- **Prettier** is an opinionated code formatter. Its sole job is to take your code and re-format it to ensure visual consistency across the entire project. It ends debates over spaces versus tabs, trailing commas, and line length.
+- **CodeQL** is a semantic code analysis engine developed by GitHub. It allows you to query your code as if it were a database to find security vulnerabilities and bugs. It is highly popular because it integrates seamlessly into the GitHub ecosystem.
+
+---
+
+## Installing packages
+
+To get started, we need to install the necessary packages for ESLint and Prettier. We don't need to install CodeQL locally as it is provided as a free service via GitHub Actions and runs directly in the CI/CD pipeline.
+
+Run the following command in your terminal to install the necessary development dependencies:
+
+```bash
+npm install -D eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-plugin-react eslint-plugin-react-hooks @typescript-eslint/parser @typescript-eslint/eslint-plugin
+```
+
+Next, you will need to create the configuration files for these tools in the root directory of your project.
+
+### ESLint Configuration (`.eslintrc.js`)
+
+Create a `.eslintrc.js` file and add the following configuration to integrate ESLint with React, TypeScript, and Prettier:
+
+```javascript
+module.exports = {
+  env: {
+    browser: true,
+    es2021: true,
+    node: true,
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:prettier/recommended',
+  ],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
+    ecmaVersion: 12,
+    sourceType: 'module',
+  },
+  plugins: ['react', '@typescript-eslint', 'prettier'],
+  rules: {
+    'prettier/prettier': 'warn',
+    'react/react-in-jsx-scope': 'off',
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+  },
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
+};
+```
+
+### Prettier Configuration (`.prettierrc`)
+
+Create a `.prettierrc` file to define your code formatting rules:
+
+```json
+{
+  "semi": true,
+  "trailingComma": "all",
+  "singleQuote": true,
+  "printWidth": 100,
+  "tabWidth": 2
+}
+```
+
+---
+
+## Configure package.json
+
+To easily execute ESLint and Prettier, we need to add several scripts to our `package.json` file.
+
+Update the `"scripts"` block in your `package.json` to include the following lines:
+
+```json
+{
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\""
+  }
+}
+```
+
+- `"format"`: Runs Prettier across the entire project directory and overwrites the files with the properly formatted code.
+- `"format:check"`: Runs Prettier in check mode, outputting any files that are not formatted correctly without modifying them. This is particularly useful for CI environments.
+- `"lint"`: Runs ESLint targeting all JavaScript and TypeScript files within the `src/` directory to catch errors and enforce code quality.
+
+---
+
+## Ignore files
+
+We don't want our linting and formatting tools to scan compiled output, third-party libraries, or cache folders. To prevent this, we must create two ignore files: `.eslintignore` and `.prettierignore`.
+
+Create both `.eslintignore` and `.prettierignore` in the root of your project and add the following folders to them:
+
+```text
+node_modules
+build
+dist
+.docusaurus
+coverage
+```
+
+- **`node_modules`**: Contains third-party dependencies which we should not lint or format.
+- **`build` & `dist`**: Compiled production outputs.
+- **`.docusaurus`**: Docusaurus cache and auto-generated build files.
+- **`coverage`**: Test coverage reporting output directory.
+
+---
+
+## Testing
+
+Now the most important part: ensuring our setup works locally.
+
+To test that Prettier is correctly formatting files, run the following command in your terminal:
+
+```bash
+npm run format
+```
+
+**Expected Output:** Prettier will scan through your project and automatically reformat any file that does not meet the standards defined in `.prettierrc`. The terminal will list the files it has processed.
+
+To check for any potential code quality issues using ESLint, run:
+
+```bash
+npm run lint
+```
+
+**Expected Output:** ESLint will scan the files in the `src/` directory. If your code is completely valid and follows all rules, the command will silently exit without any output. If there are code errors or stylistic violations, it will print a detailed report indicating the exact file, line number, and error/warning message.
+
+---
+
+## GitHub Actions CI Integration
+
+To ensure no code regressions are introduced into the main branch, these tools are executed automatically in our CI pipeline.
+
+In our `.github/workflows/ci.yml` file, we added steps to invoke both our formatting check (`npm run format:check`) and our linting script (`npm run lint`). If any of these scripts fail, the CI run will fail, blocking the pull request from being merged.
+
+Additionally, a separate `.github/workflows/codeql-analysis.yml` workflow was introduced. This workflow initializes the CodeQL environment, builds the project (if necessary), and analyzes the codebase for common vulnerabilities, reporting them directly in the GitHub Security tab of the repository.

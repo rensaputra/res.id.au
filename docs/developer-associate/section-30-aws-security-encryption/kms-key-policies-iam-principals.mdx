@@ -61,15 +61,8 @@ You can target various IAM principals directly inside a key policy statement usi
       "arn:aws:sts::123456789012:assumed-role/S3WriteRole/session-name",
       "arn:aws:iam::123456789012:role/federated-user/user-name"
     ],
-    "Service": [
-      "s3.amazonaws.com",
-      "ecs.amazonaws.com",
-      "elasticloadbalancing.amazonaws.com"
-    ],
-    "Federated": [
-      "cognito-identity.amazonaws.com",
-      "arn:aws:iam::123456789012:saml-provider/Okta"
-    ]
+    "Service": ["s3.amazonaws.com", "ecs.amazonaws.com", "elasticloadbalancing.amazonaws.com"],
+    "Federated": ["cognito-identity.amazonaws.com", "arn:aws:iam::123456789012:saml-provider/Okta"]
   },
   "Action": ["kms:Encrypt", "kms:Decrypt"],
   "Resource": "*"

@@ -33,7 +33,7 @@ When you deploy an EKS control plane, you dictate exactly how much manual server
 #### 🏗️ B. Self-Managed Nodes (Ultimate Customization)
 
 - **The Mechanics**: Your team manually spins up standard EC2 Auto Scaling Groups inside your subnets.
-- **The Requirement**: You must use the pre-baked __Amazon EKS Optimized AMI_ (or code a custom corporate OS blueprint from scratch) and manually execute the configuration bootstrap script to register the host servers up into the EKS control plane grid. You retain 100% granular control over OS system kernels and network configuration.
+- **The Requirement**: You must use the pre-baked \__Amazon EKS Optimized AMI_ (or code a custom corporate OS blueprint from scratch) and manually execute the configuration bootstrap script to register the host servers up into the EKS control plane grid. You retain 100% granular control over OS system kernels and network configuration.
 
 #### ⚡ C. AWS Fargate Profiles (100% Serverless Kubernetes)
 
@@ -53,8 +53,9 @@ To mount persistent network folders onto your workloads, you declare a declarati
 ## Exam Tips
 
 **The Pod IAM Isolation Triage**: Imagine an exam scenario states, _"You are deploying a microservice pod container onto an Amazon EKS cluster. The pod's application code needs to scan data records inside an Amazon DynamoDB table. A junior engineer proposes attaching an IAM programmatic access key directly onto the EC2 Worker Node's IAM Instance Profile. Why is this an anti-pattern, and what is the modern AWS security-compliant solution?"_  
-**The textbook diagnostic answer relies on implementing a Pod-level identity framework to maintain strict least-privilege security**.  
+**The textbook diagnostic answer relies on implementing a Pod-level identity framework to maintain strict least-privilege security**.
+
 - **The Flaw**: If you attach a DynamoDB access policy to the _EC2 Worker Node's Instance Profile_, **every single Pod running on that physical server inherits that permission!** If a non-privileged web-scraping container on that same host gets compromised, the attacker instantly gains full access to your production database backend.
 - **The Historical Solution (IRSA)**: For years, developers used _IAM Roles for Service Accounts (IRSA)_. This uses an OpenID Connect (OIDC) identity provider link to cryptographically tie an AWS IAM role down to a specific Kubernetes ServiceAccount token.
 - **The Modern 2026 Gold Standard (EKS Pod Identity)**: For modern cloud-native clusters, you deploy EKS Pod Identity. You install the lightweight _EKS Pod Identity Agent_ add-on onto your cluster node fleets. Then, you execute a direct API mapping command: `aws eks create-pod-identity-association`  
-This clean association directly maps your targeted IAM Role to your specific K8s namespace and ServiceAccount. The underlying agent securely intercepts the pod's credential provider chain, providing short-lived, isolated AWS STS tokens directly to that one specific Pod without needing any complex OIDC trust policy wiring!
+  This clean association directly maps your targeted IAM Role to your specific K8s namespace and ServiceAccount. The underlying agent securely intercepts the pod's credential provider chain, providing short-lived, isolated AWS STS tokens directly to that one specific Pod without needing any complex OIDC trust policy wiring!

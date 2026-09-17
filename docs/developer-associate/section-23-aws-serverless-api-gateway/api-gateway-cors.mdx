@@ -59,11 +59,11 @@ export const handler = async (event) => {
   const response = {
     statusCode: 200,
     headers: {
-      "Access-Control-Allow-Origin": "https://www.my-app.com",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization, x-api-key",
+      'Access-Control-Allow-Origin': 'https://www.my-app.com',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-api-key',
     },
-    body: JSON.stringify({ message: "Hello World!" }),
+    body: JSON.stringify({ message: 'Hello World!' }),
   };
   return response;
 };

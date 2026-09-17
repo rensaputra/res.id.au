@@ -15,11 +15,13 @@ sidebar_position: 1
 2. PaaS (Elastic Beanstalk) ─► You provide code. AWS handles infrastructure infrastructure but leaves you the keys.
 3. Serverless (Lambda) ──────► Total abstraction. No servers, no underlying host access, purely event-driven code.
 ```
+
 - **The Beanstalk Edge**: Unlike other highly abstracted platforms, Elastic Beanstalk **does not charge a platform premium**. You pay exactly zero extra dollars for using Beanstalk; you are billed strictly for the underlying baseline AWS resources (like the EC2 instances, ALBs, or S3 storage blocks) that it builds for you.
 
 ### Key Components to Track in this Section
 
 As we dive deep into the upcoming lectures, keep your eyes peeled for these three architectural pillars:
+
 1. **The Application**: Look at this as your logical project folder container. It acts as the umbrella workspace housing your versions, environments, and configuration blueprints.
 2. **Application Versions**: Every time you push a new code iteration, it is uploaded to an Amazon S3 vault as an immutable deployable artifact zip file. This makes rolling back broken deployments incredibly easy!
 3. **Environments**: The actual running cloud infrastructure instances execution space. You can easily instantiate multiple environments inside a single application space—such as running a low-cost Dev-Env right alongside a high-availability Prod-Env using different platform branches.
@@ -28,5 +30,6 @@ As we dive deep into the upcoming lectures, keep your eyes peeled for these thre
 
 **The Granular Troubleshooting Requirement**: Imagine an exam scenario states, _"Your engineering team needs to rapidly deploy a standard Java web application. The team requires an automated deployment method that configures load balancers and auto-scaling groups automatically. However, because the application utilizes a legacy monitoring library, the operations division must retain direct SSH terminal root access to the underlying Linux host servers to perform specialized system tweaks. Which deployment model should you choose?"_  
 **The textbook gold-standard answer is to utilize AWS Elastic Beanstalk.**
+
 - **The Trap**: Junior developers will often jump straight to AWS App Runner or AWS Lambda because they are automated or serverless. However, **App Runner and Lambda are completely black-box environments**. They hide the underlying operating system entirely, meaning you have absolute zero access to the underlying virtual machine host terminal!
 - **The Reality**: Elastic Beanstalk automatically spins up the entire infrastructure layout _inside your own account perimeters_. It gives you the best of both worlds: AWS automates the initial architecture build, but you can still grab your terminal keys, SSH directly into the managed EC2 nodes, and tweak configuration parameters or patch system dependencies with complete administrative control!

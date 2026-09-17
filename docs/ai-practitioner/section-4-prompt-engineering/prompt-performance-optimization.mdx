@@ -2,8 +2,8 @@
 sidebar_position: 4
 ---
 
-import ImageRow from "@site/src/components/ImageRow";
-import RandomnessDiversity from "./img/randomness-diversity.png";
+import ImageRow from '@site/src/components/ImageRow';
+import RandomnessDiversity from './img/randomness-diversity.png';
 
 # Prompt Performance Optimization
 
@@ -22,9 +22,10 @@ flowchart TD
     A -->|Cumulative Cutoff| C["Top-P: Sum(P) <= Threshold"]
     A -->|Count Cutoff| D["Top-K: Top N Tokens"]
 ```
-| Temperature | Top-P (Nucleus Sampling) | Top-K |
-| :--- | :--- | :--- |
-| * Low (0.0-0.2) -> Conservative/Math<br/>* High (0.8-1.0) -> Creative/Diverse | * Low (0.25) -> Top 25% prob mass<br/>* High (0.99) -> 99% broad pool | * Low (K=10) -> Top 10 words<br/>* High (K=500) -> Top 500 words |
+
+| Temperature                                                                   | Top-P (Nucleus Sampling)                                              | Top-K                                                            |
+| :---------------------------------------------------------------------------- | :-------------------------------------------------------------------- | :--------------------------------------------------------------- |
+| _ Low (0.0-0.2) -> Conservative/Math<br/>_ High (0.8-1.0) -> Creative/Diverse | _ Low (0.25) -> Top 25% prob mass<br/>_ High (0.99) -> 99% broad pool | _ Low (K=10) -> Top 10 words<br/>_ High (K=500) -> Top 500 words |
 
 Critical architectural principle: **Decoding parameters (Temperature, Top-P, Top-K) do not affect inference latency or API token pricing**. Latency is driven by **model parameter scale**, **model family architecture**, **input prompt token size**, and **total output tokens generated**.
 
@@ -36,24 +37,24 @@ Critical architectural principle: **Decoding parameters (Temperature, Top-P, Top
 
 ![](./img/llm-inference-hyperparameter-config.png)
 
-| Parameter | Range / Type | Low Value Behavior | High Value Behavior |
-| :--- | :--- | :--- | :--- |
-| **System Prompt** | Natural language text | N/A | Sets persona, behavioral rules, tone, and domain expertise |
-| **Temperature** | 0.0 to 1.0 (or >1.0) | Deterministic, factual, focused | Creative, diverse, exploratory, less predictable |
-| **Top-P (Nucleus Sampling)** | 0.0 to 1.0 | Restricts pool to top probability mass | Expands candidate pool across 90%+ cumulative probability mass |
-| **Top-K** | Integer (e.g. 1-500) | Considers only the top $K$ tokens | Considers up to $K$ candidate tokens for higher variety |
-| **Max Length** | Integer token count | Truncates output early | Permits longer multi-turn or long-form responses |
-| **Stop Sequences** | String / Token array (e.g. "\n\n", "User:") | N/A | Halts generation immediately upon emitting the specified sequence |
+| Parameter                    | Range / Type                                | Low Value Behavior                     | High Value Behavior                                               |
+| :--------------------------- | :------------------------------------------ | :------------------------------------- | :---------------------------------------------------------------- |
+| **System Prompt**            | Natural language text                       | N/A                                    | Sets persona, behavioral rules, tone, and domain expertise        |
+| **Temperature**              | 0.0 to 1.0 (or >1.0)                        | Deterministic, factual, focused        | Creative, diverse, exploratory, less predictable                  |
+| **Top-P (Nucleus Sampling)** | 0.0 to 1.0                                  | Restricts pool to top probability mass | Expands candidate pool across 90%+ cumulative probability mass    |
+| **Top-K**                    | Integer (e.g. 1-500)                        | Considers only the top $K$ tokens      | Considers up to $K$ candidate tokens for higher variety           |
+| **Max Length**               | Integer token count                         | Truncates output early                 | Permits longer multi-turn or long-form responses                  |
+| **Stop Sequences**           | String / Token array (e.g. "\n\n", "User:") | N/A                                    | Halts generation immediately upon emitting the specified sequence |
 
 ---
 
 ### Temperature vs. Top-P vs. Top-K: The Mathematical Difference
 
-| Parameter | Definition & Effect |
-| :--- | :--- |
-| **1. TEMPERATURE (Modulates Logit Curve Softness)** | Softmax Logit Transformation: `P(w_i) = exp(z_i / T) / Sum(exp(z_j / T))` <br/> * `T -> 0.0`: Sharp spike on the highest-probability token (Greedy search). <br/> * `T -> 1.0`: Flattens logits, giving lower-ranked tokens higher selection odds. |
-| **2. TOP-P / NUCLEUS SAMPLING (Dynamically Adapts by Mass)** | Selects the smallest subset of tokens `V^(P)` such that: `Sum_{w in V^(P)} P(w) >= P` <br/> * Dynamically expands when predictions are uncertain (flat distribution) <br/> * Shrinks to 1-2 tokens when the model is confident (sharp distribution) |
-| **3. TOP-K SAMPLING (Static Count Cutoff)** | Selects strictly the top K tokens with highest probabilities: `\|V^(K)\| = K` |
+| Parameter                                                    | Definition & Effect                                                                                                                                                                                                                                 |
+| :----------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1. TEMPERATURE (Modulates Logit Curve Softness)**          | Softmax Logit Transformation: `P(w_i) = exp(z_i / T) / Sum(exp(z_j / T))` <br/> _ `T -> 0.0`: Sharp spike on the highest-probability token (Greedy search). <br/> _ `T -> 1.0`: Flattens logits, giving lower-ranked tokens higher selection odds.  |
+| **2. TOP-P / NUCLEUS SAMPLING (Dynamically Adapts by Mass)** | Selects the smallest subset of tokens `V^(P)` such that: `Sum_{w in V^(P)} P(w) >= P` <br/> _ Dynamically expands when predictions are uncertain (flat distribution) <br/> _ Shrinks to 1-2 tokens when the model is confident (sharp distribution) |
+| **3. TOP-K SAMPLING (Static Count Cutoff)**                  | Selects strictly the top K tokens with highest probabilities: `\|V^(K)\| = K`                                                                                                                                                                       |
 
 $$\text{Temperature Controls: } \textbf{How adventurous the choice is} \quad \Big\vert{} \quad \text{Top-P / Top-K Controls: } \textbf{What options are on the table}$$
 
@@ -63,9 +64,9 @@ $$\text{Temperature Controls: } \textbf{How adventurous the choice is} \quad \Bi
 
 When optimizing generative AI response times, isolate true architectural bottlenecks from sampling settings:
 
-| Latency Drivers (Direct Impact) | Non-Latency Factors (Zero Impact) |
-| :--- | :--- |
-| * Foundation Model Parameter Scale<br/>* Model Architecture (Nova Micro vs. Claude Sonnet)<br/>* Input Prompt Token Length<br/>* Output Generated Token Volume | * Temperature changes (0.0 vs 1.0)<br/>* Top-P probability threshold tweaks<br/>* Top-K pool limits<br/>* System prompt tone (unless it forces longer output length) |
+| Latency Drivers (Direct Impact)                                                                                                                                | Non-Latency Factors (Zero Impact)                                                                                                                                    |
+| :------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| _ Foundation Model Parameter Scale<br/>_ Model Architecture (Nova Micro vs. Claude Sonnet)<br/>_ Input Prompt Token Length<br/>_ Output Generated Token Volume | _ Temperature changes (0.0 vs 1.0)<br/>_ Top-P probability threshold tweaks<br/>_ Top-K pool limits<br/>_ System prompt tone (unless it forces longer output length) |
 
 $$\text{Total Generation Latency} \approx \text{Time to First Token (TTFT)} + \left( \text{Output Token Count} \times \text{Inter-Token Latency} \right)$$
 

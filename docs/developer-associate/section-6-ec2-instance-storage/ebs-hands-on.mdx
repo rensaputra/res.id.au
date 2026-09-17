@@ -8,7 +8,7 @@ Show and tell for how Elastic Block Store (EBS) volume behave in the real world.
 
 ## Key Takeaways
 
-- **The Strict AZ-Lock Rule**: Just a quick reminder that Region is a collection of Availability Zones (AZs). So we need to make sure our EBS volume and EC2 instance are in the same AZ. For example, my instance is in `ap-souteast-2c`.
+- **The Strict AZ-Lock Rule**: Just a quick reminder that Region is a collection of Availability Zones (AZs). So we need to make sure our EBS volume and EC2 instance are in the same AZ. For example, my instance is in `ap-southeast-2c`.
   ![Checking which AZ your EC2 instance is in](./img/check-ec2-az.png)
   - **The Experiment**: When I create a 1 GB EBS volume in `ap-southeast-2a` and try to attach it to my instance in `ap-southeast-2c`, the console straight up hide the instance from the dropdown list.
     ![Attaching EBS volume to EC2 instance in different AZ](./img/attach-ebs-to-ec2-different-az.png)

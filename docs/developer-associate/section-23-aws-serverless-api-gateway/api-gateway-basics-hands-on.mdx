@@ -93,11 +93,11 @@ export const handler = async (event, context) => {
   console.log(JSON.stringify(context, null, 2));
   const response = {
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     statusCode: 200,
     body: JSON.stringify({
-      message: "Welcome to MyFirstAPI",
+      message: 'Welcome to MyFirstAPI',
       trace: `${context?.awsRequestId}`,
     }),
   };

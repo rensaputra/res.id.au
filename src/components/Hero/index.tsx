@@ -1,20 +1,15 @@
-import React from "react";
-import styles from "./styles.module.css";
-import clsx from "clsx";
-import Link from "@docusaurus/Link";
-import useBaseUrl from "@docusaurus/useBaseUrl";
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import React from 'react';
+import styles from './styles.module.css';
+import clsx from 'clsx';
+import Link from '@docusaurus/Link';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import { ChevronRightIcon } from '@heroicons/react/24/outline';
 
 export default function Hero() {
-  const avatarUrl = useBaseUrl("/images/ava.jpg");
+  const avatarUrl = useBaseUrl('/images/ava.jpg');
 
   return (
-    <header
-      className={clsx(
-        styles.hero,
-        "py-8 bg-gradient-to-r from-[#1b2733] to-[#442d34]",
-      )}
-    >
+    <header className={clsx(styles.hero, 'py-8 bg-gradient-to-r from-[#1b2733] to-[#442d34]')}>
       <div className="max-w-4xl mx-auto px-4 text-center">
         <div className="flex flex-col items-center justify-center">
           <div className="h-32 w-32 overflow-hidden rounded-full border-2 border-white mb-4">
@@ -26,32 +21,26 @@ export default function Hero() {
               className="h-full w-full scale-125 object-cover"
             />
           </div>
-          <h1
-            className={clsx(
-              "mb-0 text-3xl font-bold leading-tight tracking-wider",
-            )}
-          >
-            <span className={styles.initial}>R</span>ENDY{" "}
-            <span className={styles.initial}>E</span>KA{" "}
-            <span className={styles.initial}>S</span>APUTRA
+          <h1 className={clsx('mb-0 text-3xl font-bold leading-tight tracking-wider')}>
+            <span className={styles.initial}>R</span>ENDY <span className={styles.initial}>E</span>
+            KA <span className={styles.initial}>S</span>APUTRA
           </h1>
           <h2
             className={clsx(
-              "mb-0 mt-0 text-sm leading-tight text-gray-400 rounded-full bg-gray-100/10 px-2 py-1 tracking-wider",
+              'mb-0 mt-0 text-sm leading-tight text-gray-400 rounded-full bg-gray-100/10 px-2 py-1 tracking-wider',
             )}
           >
             Full-Stack Engineer. Cloud Builder. Lifelong Learner.
           </h2>
         </div>
         <p className="mt-4 tracking-normal leading-normal text-lg text-gray-100">
-          I’m a Senior Software Engineer & Technical Consultant based in Sydney,
-          specializing in full-stack architecture, cloud solutions, and
-          resilient web platforms. Lifelong learner, constant tinkerer, and
-          proud dad.
+          I’m a Senior Software Engineer & Technical Consultant based in Sydney, specializing in
+          full-stack architecture, cloud solutions, and resilient web platforms. Lifelong learner,
+          constant tinkerer, and proud dad.
         </p>
       </div>
       <div className="flex flex-col items-center justify-center mt-4 space-y-3 md:flex-row md:space-x-3 md:space-y-0">
-        <Link to="/docs/intro" className={clsx(styles["button-primary"])}>
+        <Link to="/docs/intro" className={clsx(styles['button-primary'])}>
           Read Docs
           <ChevronRightIcon className="ml-2 h-5 w-5" aria-hidden="true" />
         </Link>
@@ -60,7 +49,7 @@ export default function Hero() {
             href="https://github.com/rensaputra"
             target="_blank"
             rel="noopener noreferrer"
-            className={clsx(styles["button-secondary"])}
+            className={clsx(styles['button-secondary'])}
           >
             <svg
               viewBox="0 0 496 512"
@@ -79,7 +68,7 @@ export default function Hero() {
             href="https://linkedin.com/in/rendyekasaputra/"
             target="_blank"
             rel="noopener noreferrer"
-            className={clsx(styles["button-secondary"])}
+            className={clsx(styles['button-secondary'])}
           >
             <svg
               viewBox="0 0 448 512"

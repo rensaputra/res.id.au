@@ -1,3 +1,9 @@
 blog:
   label: Blog
   description: General blog posts
+react:
+  label: React
+  description: React framework and library content
+typescript:
+  label: TypeScript
+  description: TypeScript specific content

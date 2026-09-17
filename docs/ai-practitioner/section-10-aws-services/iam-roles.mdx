@@ -1,16 +1,16 @@
 ---
 sidebar_position: 6
-title: "IAM Roles"
-description: "AWS Identity and Access Management (IAM) Roles are secure identity entities created in an AWS account that have specific permissions assigned via policies, but are not associated with a specific person or static long-term credentials. Instead, IAM Roles are intended to be assumed by AWS services (such as Amazon EC2 instances, AWS Lambda functions, Amazon SageMaker training jobs, or Amazon Bedrock agents) to perform actions on your behalf using short-lived, temporary security credentials."
+title: 'IAM Roles'
+description: 'AWS Identity and Access Management (IAM) Roles are secure identity entities created in an AWS account that have specific permissions assigned via policies, but are not associated with a specific person or static long-term credentials. Instead, IAM Roles are intended to be assumed by AWS services (such as Amazon EC2 instances, AWS Lambda functions, Amazon SageMaker training jobs, or Amazon Bedrock agents) to perform actions on your behalf using short-lived, temporary security credentials.'
 keywords:
   [
-    "AWS IAM Roles",
-    "IAM Roles",
-    "IAM Trust Policy",
-    "IAM Permissions Policy",
-    "IAM Role Assumption",
-    "IAM Role Temporary Credentials",
-    "IAM Role Execution Role",
+    'AWS IAM Roles',
+    'IAM Roles',
+    'IAM Trust Policy',
+    'IAM Permissions Policy',
+    'IAM Role Assumption',
+    'IAM Role Temporary Credentials',
+    'IAM Role Execution Role',
   ]
 ---
 
@@ -148,10 +148,7 @@ Once the trusted service assumes the role, this policy determines what API actio
       "Sid": "AllowS3TrainingDataPull",
       "Effect": "Allow",
       "Action": ["s3:GetObject", "s3:ListBucket"],
-      "Resource": [
-        "arn:aws:s3:::training-corpus",
-        "arn:aws:s3:::training-corpus/*"
-      ]
+      "Resource": ["arn:aws:s3:::training-corpus", "arn:aws:s3:::training-corpus/*"]
     }
   ]
 }

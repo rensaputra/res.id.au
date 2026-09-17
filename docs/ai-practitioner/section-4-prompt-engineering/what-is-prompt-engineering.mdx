@@ -10,12 +10,12 @@ sidebar_position: 2
 
 Prompt engineering is the systematic design and optimization of input text to guide Foundation Models (FMs) toward accurate, deterministic, and context-aligned responses. Instead of relying on naive, open-ended queries (e.g., _"Summarize what is AWS"_), enterprise prompts use **Four Core Structural Blocks**:
 
-| Block | Description |
-| :--- | :--- |
-| **1. INSTRUCTIONS** | The explicit task and behavioral guidelines |
-| **2. CONTEXT** | External background information and target audience persona |
-| **3. INPUT DATA** | The raw text, document, or data to be processed |
-| **4. OUTPUT INDICATOR** | The exact format, length, or structural constraint |
+| Block                   | Description                                                 |
+| :---------------------- | :---------------------------------------------------------- |
+| **1. INSTRUCTIONS**     | The explicit task and behavioral guidelines                 |
+| **2. CONTEXT**          | External background information and target audience persona |
+| **3. INPUT DATA**       | The raw text, document, or data to be processed             |
+| **4. OUTPUT INDICATOR** | The exact format, length, or structural constraint          |
 
 To narrow model boundaries further, **Negative Prompting** explicitly defines what the model must **exclude or avoid**, eliminating irrelevant details, hallucinations, and unwanted technical jargon.
 
@@ -27,12 +27,12 @@ To narrow model boundaries further, **Negative Prompting** explicitly defines wh
 
 When designing prompts for Amazon Bedrock or any LLM, organizing input into four distinct components minimizes ambiguity and improves consistency:
 
-| Component | Definition | Concrete Exam Example |
-| :--- | :--- | :--- |
-| **1. Instructions** | Specifies the exact task to perform and behavioral rules. | "Write a clear, concise summary focusing on core cloud services." |
-| **2. Context** | Background situation, domain role, or target audience persona. | "You are teaching a beginner-level cloud foundations class." |
-| **3. Input Data** | The raw content, article text, or data records being analyzed. | `<article> AWS provides on-demand compute and storage... </article>` |
-| **4. Output Indicator** | Explicit schema, word count, tone, or structural formatting output. | "Provide a 2-3 sentence summary in a bulleted list format." |
+| Component               | Definition                                                          | Concrete Exam Example                                                |
+| :---------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------- |
+| **1. Instructions**     | Specifies the exact task to perform and behavioral rules.           | "Write a clear, concise summary focusing on core cloud services."    |
+| **2. Context**          | Background situation, domain role, or target audience persona.      | "You are teaching a beginner-level cloud foundations class."         |
+| **3. Input Data**       | The raw content, article text, or data records being analyzed.      | `<article> AWS provides on-demand compute and storage... </article>` |
+| **4. Output Indicator** | Explicit schema, word count, tone, or structural formatting output. | "Provide a 2-3 sentence summary in a bulleted list format."          |
 
 $$\text{Effective Prompt Execution} = \text{Instructions} + \text{Context} + \text{Input Data} + \text{Output Indicator}$$
 
@@ -50,9 +50,9 @@ flowchart TD
 
 Negative Prompting tells the model what **not** to do. While positive instructions define the target output, negative constraints prevent common generation pitfalls:
 
-| Positive Guidance (What to include) | Negative Constraints (What to exclude) |
-| :--- | :--- |
-| * Explain core benefits of AWS S3<br/>* Focus on storage durability<br/>* Write for beginner learners | * Do NOT use complex technical jargon<br/>* Avoid mentioning pricing numbers or quotas<br/>* Exclude speculative future capabilities |
+| Positive Guidance (What to include)                                                                    | Negative Constraints (What to exclude)                                                                                                |
+| :----------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| _ Explain core benefits of AWS S3<br/>_ Focus on storage durability<br/>\* Write for beginner learners | _ Do NOT use complex technical jargon<br/>_ Avoid mentioning pricing numbers or quotas<br/>\* Exclude speculative future capabilities |
 
 ![](./img/negative-prompting.png)
 

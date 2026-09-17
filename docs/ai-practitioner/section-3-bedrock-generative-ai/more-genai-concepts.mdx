@@ -4,22 +4,22 @@ title: More GenAI Concepts
 description: Generative AI models do not read characters, words, or pixels the way humans do
 keywords:
   [
-    "Generative AI",
-    "GenAI",
-    "Foundation Models",
-    "LLMs",
-    "Diffusion Models",
-    "Deep Learning",
-    "AI Hierarchy",
-    "Non-Deterministic",
-    "Next-Token Probability",
-    "Image Synthesis",
+    'Generative AI',
+    'GenAI',
+    'Foundation Models',
+    'LLMs',
+    'Diffusion Models',
+    'Deep Learning',
+    'AI Hierarchy',
+    'Non-Deterministic',
+    'Next-Token Probability',
+    'Image Synthesis',
   ]
 ---
 
-import ImageRow from "@site/src/components/ImageRow";
-import twoDVisualization from "./img/2d-visualization.png";
-import colorVisualization from "./img/color-visualization.png";
+import ImageRow from '@site/src/components/ImageRow';
+import twoDVisualization from './img/2d-visualization.png';
+import colorVisualization from './img/color-visualization.png';
 
 # More GenAI Concepts
 
@@ -51,9 +51,9 @@ Tokenization is the mandatory pre-processing step that converts raw strings into
 
 ### Tokenization Strategies
 
-| Tokenization Type | Operational Mechanism & Characterization |
-| :--- | :--- |
-| Word-based Tokenization | Splits text strictly on whitespace and punctuation. Creates huge vocabularies; fails on typos and rare words. |
+| Tokenization Type                      | Operational Mechanism & Characterization                                                                                                                                    |
+| :------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Word-based Tokenization                | Splits text strictly on whitespace and punctuation. Creates huge vocabularies; fails on typos and rare words.                                                               |
 | Subword Tokenization (BPE / WordPiece) | Splits uncommon or complex words into frequent subword fragments (e.g., "unacceptable" -> "un" + "acceptable"). Handles prefixes, suffixes, and multilingual stems cleanly. |
 
 ```mermaid
@@ -81,13 +81,13 @@ $$\text{Total Window Utilization} = \text{Input Prompt Tokens} + \text{Generated
 
 ### Context Window Spectrum
 
-| Foundation Model | Window Capacity | Workload Target |
-| :--- | :--- | :--- |
-| Meta Llama 2 | 4,096 tokens | Short conversational turns & Q&A |
-| Amazon Titan Text | 8,192 tokens | Standard enterprise tasks & summarization |
-| OpenAI GPT-4 Turbo | 128,000 tokens | Comprehensive multi-page reporting |
-| Anthropic Claude 3.5 | 200,000 tokens | Codebase analysis & book-length docs |
-| Google Gemini 1.5 Pro | 1,000,000+ tokens | Multi-hour video, audio, & repos |
+| Foundation Model      | Window Capacity   | Workload Target                           |
+| :-------------------- | :---------------- | :---------------------------------------- |
+| Meta Llama 2          | 4,096 tokens      | Short conversational turns & Q&A          |
+| Amazon Titan Text     | 8,192 tokens      | Standard enterprise tasks & summarization |
+| OpenAI GPT-4 Turbo    | 128,000 tokens    | Comprehensive multi-page reporting        |
+| Anthropic Claude 3.5  | 200,000 tokens    | Codebase analysis & book-length docs      |
+| Google Gemini 1.5 Pro | 1,000,000+ tokens | Multi-hour video, audio, & repos          |
 
 $$\text{Processing Overhead} \propto \mathcal{O}(N^2) \quad (\text{Standard self-attention compute scales quadratically with sequence length } N)$$
 

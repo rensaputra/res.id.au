@@ -67,10 +67,7 @@ To achieve standard industry compliance, you must block the unencrypted pipe ent
       "Effect": "Deny",
       "Principal": "*",
       "Action": "s3:*",
-      "Resource": [
-        "arn:aws:s3:::your-bucket-name-here",
-        "arn:aws:s3:::your-bucket-name-here/*"
-      ],
+      "Resource": ["arn:aws:s3:::your-bucket-name-here", "arn:aws:s3:::your-bucket-name-here/*"],
       "Condition": {
         "Bool": {
           "aws:SecureTransport": "false"

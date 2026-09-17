@@ -5,9 +5,9 @@ module.exports = {
     container: false,
   },
   darkMode: ['class', '[data-theme="dark"]'],
-  content: ["./src/**/*.{js,jsx,ts,tsx}", "./docs/**/*.{md,mdx}", "./docusaurus.config.ts"],
+  content: ['./src/**/*.{js,jsx,ts,tsx}', './docs/**/*.{md,mdx}', './docusaurus.config.ts'],
   theme: {
     extend: {},
   },
   plugins: [],
-}
+};

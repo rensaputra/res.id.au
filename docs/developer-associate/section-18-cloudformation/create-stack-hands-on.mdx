@@ -14,11 +14,12 @@ We are logging into the AWS Console and anchoring ourselves specifically in the 
 
 - **The Regional Boundary Guard**: Switch your console destination directly to `ap-southeast-2`. Running a CloudFormation template with a hardcoded ImageId in the wrong region causes the stack engine to crash immediately with an invalid AMI identifier error.
 - **Canvas Examination**: Explore a [sample WordPress block template](http://cloudformation-templates-us-east-1.s3.us-east-1.amazonaws.com/WordPress_Multi_AZ.template) inside Infrastructure Composer. Note how complex, multi-tier YAML configurations parse into clean interactive nodes (like `WebServerSecurityGroup` or `LaunchConfig`) on a visual canvas, showing how infrastructure blocks map to each other.
-![](./img/infrastructure-composer-wordpress.png)
+  ![](./img/infrastructure-composer-wordpress.png)
 
 #### Phase 2: Minimal EC2 Template Deployment
 
 - `Code Structural Inventory`: Open up the basic target file `0-just-ec2.yaml` in your workspace. The blueprint contains the exact bare minimum structural parameters required to instantiate an AWS compute node:
+
 ```YAML title="0-just-ec2.yaml"
 ---
 Resources:
@@ -35,18 +36,18 @@ Resources:
 - **Wizard Execution**: Inside the CloudFormation dashboard, click **Create Stack** (with new resources).
 - **The S3 Staging Event**: Choose **Upload a template file** and point it to your local `0-just-ec2.yaml`. The moment you select it, the AWS Console quietly uploads that raw text file into an automated tracking bucket inside **Amazon S3**.
 - **Naming and Submission**: Title your stack `EC2InstanceDemo`, click through the default permission screens, and hit Submit.
-![](./img/cloudformation-create-stack.png)
+  ![](./img/cloudformation-create-stack.png)
 
 #### Phase 4: Lifecycle Monitoring & Tag Verification
 
 - **Tracking State Transitions**: Refresh the **Events** tab immediately. You will watch the deployment machine execute the provisioning pipeline:
-    1. `EC2InstanceDemo - CREATE_IN_PROGRESS`
-    2. `MyInstance - CREATE_IN_PROGRESS`
-    3. `MyInstance - CREATE_COMPLETE`
-    4. `EC2InstanceDemo - CREATE_COMPLETE`
+  1. `EC2InstanceDemo - CREATE_IN_PROGRESS`
+  2. `MyInstance - CREATE_IN_PROGRESS`
+  3. `MyInstance - CREATE_COMPLETE`
+  4. `EC2InstanceDemo - CREATE_COMPLETE`
 - **Resource Introspection**: Head over to the **Resources** tab, find the generated **Physical ID** (the instance ID string like `i-0xxxxxx`), and click it. This jumps you straight into the live Amazon EC2 Dashboard.
 - **Metadata Tag Verification**: Look at the **Tags** tab on the newly created instance. CloudFormation automatically injects three system auditing tags onto every resource it spins up:
-![](./img/cloudformation-resource-tags.png)
+  ![](./img/cloudformation-resource-tags.png)
 
 ## Exam Tips
 
@@ -55,10 +56,6 @@ Resources:
 
 ### Practice Test
 
-**Question**: A development team copies a valid AWS CloudFormation template that successfully deploys an auto-scaled development environment in the `us-east-1` region. However, when they attempt to deploy the exact same template file inside the `eu-west-1` region to spin up a European staging cluster, the stack creation immediately fails and returns the error status: _CloudFormation received a 400 response. Value (ami-0c7217cdde317cfec) for imageId is invalid_. How should the developer fix this?
-    - **A**. Grant the CloudFormation execution service role explicit IAM permissions to perform s3:GetObject against global bucket targets.
-    - **B**. Modify the template to use a `t2.micro` instance type instead of regional compute boundaries.
-    - **C**. Replace the hardcoded ImageId value with the corresponding valid AMI identifier unique to the `eu-west-1` region, or abstract it using a CloudFormation Mappings block.
-    - **D**. Re-run the stack creation process using JSON format instead of YAML to bypass string validation checks.
+**Question**: A development team copies a valid AWS CloudFormation template that successfully deploys an auto-scaled development environment in the `us-east-1` region. However, when they attempt to deploy the exact same template file inside the `eu-west-1` region to spin up a European staging cluster, the stack creation immediately fails and returns the error status: _CloudFormation received a 400 response. Value (ami-0c7217cdde317cfec) for imageId is invalid_. How should the developer fix this? - **A**. Grant the CloudFormation execution service role explicit IAM permissions to perform s3:GetObject against global bucket targets. - **B**. Modify the template to use a `t2.micro` instance type instead of regional compute boundaries. - **C**. Replace the hardcoded ImageId value with the corresponding valid AMI identifier unique to the `eu-west-1` region, or abstract it using a CloudFormation Mappings block. - **D**. Re-run the stack creation process using JSON format instead of YAML to bypass string validation checks.
 
 **Correct Answer: C**. Because AMI IDs are strictly bound to their respective geographic AWS regions, copying a template with a hardcoded image ID across regional lines will cause the stack generation engine to fail. The value must be updated to match the target region's local image catalog.

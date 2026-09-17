@@ -20,7 +20,7 @@ Using an **AWS Lambda function** in logical routing flow of your state machine i
 
 ```javascript title="index.mjs"
 export const handler = async (event) => {
-  const targetUser = event.who || "Stranger";
+  const targetUser = event.who || 'Stranger';
   return `Hello, ${targetUser}!`;
 };
 ```

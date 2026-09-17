@@ -15,13 +15,13 @@ When you update an app on Elastic Beanstalk, you have six distinct ways to push 
   - **Downtime**: Yes. The app goes dark during the installation gap.
   - **Cost**: Zero extra cost.
   - **Best For**: Dev/Test environments where you just need to iterate fast and nobody cares if the server drops for a minute.
-  ![](./img/beanstalk-deployment-all-at-once.png)
+    ![](./img/beanstalk-deployment-all-at-once.png)
 - **Rolling**
   - **Mechanics**: Modifies instances in small subsets called buckets or batches. While bucket A is offline upgrading to `v2`, bucket B is still online serving `v1` traffic. Once bucket A passes health checks, Beanstalk moves to bucket B.
   - **Downtime**: No downtime, but your application runs below full capacity during the rollout because active instances are temporarily offline.
   - **Cost**: Zero extra cost.
   - **Risk**: Users will experience a mixed-version state (`v1` and `v2` running simultaneously). If a buggy deployment hits, rolling back requires re-deploying the old version across the buckets, which takes a long time.  
-  ![](./img/beanstalk-deployment-rolling.png)
+    ![](./img/beanstalk-deployment-rolling.png)
 
 ### Method 2:Capacity-Guaranteed Methods (Zero Performance Impact)
 
@@ -29,13 +29,13 @@ When you update an app on Elastic Beanstalk, you have six distinct ways to push 
   - **Mechanics**: Like standard Rolling, but avoids running under capacity. Beanstalk spins up a brand-new batch of temporary EC2 instances running `v2` _first_. Then, it upgrades the older instances bucket-by-bucket.
   - **Downtime**: **Zero downtime**. The fleet always stays at or above 100% target performance capacity.
   - **Cost**: Small additional cost for the temporary instances, which are terminated at the end of the lifecycle.
-  ![](./img/beanstalk-deployment-rolling-additional-batch.png)
+    ![](./img/beanstalk-deployment-rolling-additional-batch.png)
 - **Immutable**
   - **Mechanics**: Beanstalk leaves your original Auto Scaling Group (ASG) completely alone. It provisions a parallel **temporary ASG** and deploys a single `v2` instance to test the waters (canary testing). If that instance passes health checks, Beanstalk scales up the temporary ASG to match full capacity, merges the instances into the main ASG, and terminates the old `v1` instances.
   - **Downtime**: **Zero downtime**.
   - **Cost**: High temporary cost (doubles your instance footprint during deployment).
   - **Rollback**: Blazing fast. If `v2` fails, Beanstalk just deletes the temporary ASG. Your original fleet was never touched.  
-  ![](./img/beanstalk-deployment-immutable.png)
+    ![](./img/beanstalk-deployment-immutable.png)
 
 ### Method 3: Traffic Routing Environments (Advanced Control)
 
@@ -43,11 +43,11 @@ When you update an app on Elastic Beanstalk, you have six distinct ways to push 
   - **Mechanics**: A completely **external/manual architecture pattern** relative to the standard Beanstalk engine. You spin up an entirely separate, distinct Beanstalk environment (Green) running `v2` alongside your live environment (Blue) running `v1`.
   - **Routing Control**: You manually use Route 53 weighted routing policies or the Beanstalk **Swap Environment URLs** feature to cut traffic over.
   - **Cost**: High (dual environments running together), but provides long-term isolation for extensive staging tests.
-  ![](./img/beanstalk-deployment-blue-green.png)
+    ![](./img/beanstalk-deployment-blue-green.png)
 - **Traffic Splitting (Canary Testing)**
   - **Mechanics**: Fully automated within a single environment. Beanstalk launches a temporary ASG with matching capacity running `v2`. It instructs the Application Load Balancer (ALB) to route a precise, small percentage of live production traffic (e.g., 10%) to the new code.
   - **Evaluation**: Beanstalk monitors the health metrics of the split traffic for a configured duration. If errors spike, it triggers an **automated rollback** instantly by shifting ALB weights back to 100% on the original fleet. If healthy, `v2` instances migrate to the main ASG and old instances are cleared.  
-  ![](./img/beanstalk-deployment-traffic-splitting.png)
+    ![](./img/beanstalk-deployment-traffic-splitting.png)
 
 #### Traffic Splitting Canary Flow
 

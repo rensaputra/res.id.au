@@ -36,11 +36,11 @@ export const handler = async (event) => {
   console.debug(event);
   const response = {
     statusCode: 200,
-    statusDescription: "200 OK",
+    statusDescription: '200 OK',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ text: "Hello From Lambda" }),
+    body: JSON.stringify({ text: 'Hello From Lambda' }),
     isBase64Encoded: false,
   };
   return response;

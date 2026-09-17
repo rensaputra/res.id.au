@@ -18,12 +18,12 @@ We'll be tracking raw runtime exceptions cascading through real cloud architectu
 class CustomError extends Error {
   constructor(message) {
     super(message);
-    this.name = "CustomError";
+    this.name = 'CustomError';
   }
 }
 
 export const handler = async (event) => {
-  throw new CustomError("This is a custom error!");
+  throw new CustomError('This is a custom error!');
 };
 ```
 

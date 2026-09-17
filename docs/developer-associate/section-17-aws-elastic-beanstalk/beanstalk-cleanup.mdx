@@ -18,17 +18,13 @@ When you're finished testing or iterating, leaving active high-availability envi
 ### Phase 2: CloudFormation Under-the-Hood Teardown
 
 - **Cascading Deletions**: The moment you confirm, Beanstalk forwards a termination instruction to AWS CloudFormation. The status of your associated stacks immediately flips to DELETE_IN_PROGRESS.
-- **Resource Scrubbing Lifecycle**: Because CloudFormation maintains a strict dependency map of your infrastructure, it executes the teardown in reverse order to ensure no orphaned resources are left behind. The engine purges:
-    - The **Application Load Balancers (ALBs)** and their target groups.
-    - The **Auto Scaling Groups (ASGs)**, which automatically terminates all running `t3.micro` EC2 instances.
-    - All associated **CloudWatch Alarms** and dynamic scaling policies.
-    - The underlying **EC2 Security Groups** and ingress firewall boundaries.
-![](./img/beanstalk-delete-stack.png)
+- **Resource Scrubbing Lifecycle**: Because CloudFormation maintains a strict dependency map of your infrastructure, it executes the teardown in reverse order to ensure no orphaned resources are left behind. The engine purges: - The **Application Load Balancers (ALBs)** and their target groups. - The **Auto Scaling Groups (ASGs)**, which automatically terminates all running `t3.micro` EC2 instances. - All associated **CloudWatch Alarms** and dynamic scaling policies. - The underlying **EC2 Security Groups** and ingress firewall boundaries.
+  ![](./img/beanstalk-delete-stack.png)
 
 ### Phase 3: The S3 Artifact Exception
 
 - **Storage Preservation**: While CloudFormation wipes out the compute and networking stack, Beanstalk intentionally leaves its automatically generated **Amazon S3 deployment buckets** intact inside your account. This prevents accidental deletion of your deployment history and application source bundle `.zip` archives. If you want those gone too, you must manually empty and delete that specific S3 bucket yourself.
-![](./img/beanstalk-delete-s3.png)
+  ![](./img/beanstalk-delete-s3.png)
 
 ## Exam Tips
 
@@ -37,10 +33,6 @@ When you're finished testing or iterating, leaving active high-availability envi
 
 ### Practice Test
 
-**Question**: A software engineering associate has completed testing a secondary multi-tier web application stack inside an AWS Elastic Beanstalk environment. To prevent incurring further infrastructure charges for the active Application Load Balancer and Auto Scaling Group fleet, the developer executes a "Delete Application" action from the Elastic Beanstalk console. What occurs on the backend during this process?
-    - **A**. The running EC2 instances are stopped, but the Application Load Balancer remains active until manually deleted via the EC2 dashboard.
-    - **B**. Beanstalk triggers a cascading deletion of the underlying AWS CloudFormation stack, which automatically tears down the load balancer, auto scaling group, instances, and security groups.
-    - **C**. The application code is wiped from the servers, but the network infrastructure is converted into an independent CloudFormation template for reuse.
-    - **D**. The entire AWS account goes into a restricted billing state until the underlying S3 buckets are manually scrubbed via the AWS CLI.
+**Question**: A software engineering associate has completed testing a secondary multi-tier web application stack inside an AWS Elastic Beanstalk environment. To prevent incurring further infrastructure charges for the active Application Load Balancer and Auto Scaling Group fleet, the developer executes a "Delete Application" action from the Elastic Beanstalk console. What occurs on the backend during this process? - **A**. The running EC2 instances are stopped, but the Application Load Balancer remains active until manually deleted via the EC2 dashboard. - **B**. Beanstalk triggers a cascading deletion of the underlying AWS CloudFormation stack, which automatically tears down the load balancer, auto scaling group, instances, and security groups. - **C**. The application code is wiped from the servers, but the network infrastructure is converted into an independent CloudFormation template for reuse. - **D**. The entire AWS account goes into a restricted billing state until the underlying S3 buckets are manually scrubbed via the AWS CLI.
 
 **Correct Answer: B**. Because Elastic Beanstalk abstracts its provisioning layer using AWS CloudFormation, dropping the application triggers a comprehensive, cascading stack teardown that removes all associated compute, balancing, and security components cleanly.

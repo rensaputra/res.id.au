@@ -48,15 +48,15 @@ $$\text{Total Cloud Security} = \text{AWS Infrastructure ("OF the Cloud")} + \te
 
 The amount of security configuration required depends directly on the service tier you select:
 
-| Component | IaaS (e.g. EC2) | PaaS / Managed AI | SaaS (AI APIs) |
-| --- | --- | --- | --- |
-| Physical Hardware | AWS | AWS | AWS |
-| Host Virtualization | AWS | AWS | AWS |
-| Guest OS Patching | CUSTOMER | AWS | AWS |
-| Network Configuration | CUSTOMER | Shared / Managed | AWS |
-| Application Code / ML | CUSTOMER | CUSTOMER | AWS |
-| Access / IAM Control | CUSTOMER | CUSTOMER | CUSTOMER |
-| Customer Data & Prompts| CUSTOMER | CUSTOMER | CUSTOMER |
+| Component               | IaaS (e.g. EC2) | PaaS / Managed AI | SaaS (AI APIs) |
+| ----------------------- | --------------- | ----------------- | -------------- |
+| Physical Hardware       | AWS             | AWS               | AWS            |
+| Host Virtualization     | AWS             | AWS               | AWS            |
+| Guest OS Patching       | CUSTOMER        | AWS               | AWS            |
+| Network Configuration   | CUSTOMER        | Shared / Managed  | AWS            |
+| Application Code / ML   | CUSTOMER        | CUSTOMER          | AWS            |
+| Access / IAM Control    | CUSTOMER        | CUSTOMER          | CUSTOMER       |
+| Customer Data & Prompts | CUSTOMER        | CUSTOMER          | CUSTOMER       |
 
 - **Infrastructure as a Service (IaaS - e.g., EC2 for custom ML):** You manage the guest operating system, install updates, patch vulnerabilities, and set firewall rules.
 - **Managed AI Services (e.g., Amazon Bedrock, SageMaker Serverless):** AWS manages the underlying compute runtime, OS patching, and model hosting hardware. You remain responsible for training datasets, prompt inputs, API access keys, and IAM policies.
