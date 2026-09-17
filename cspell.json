@@ -124,12 +124,7 @@
     "Yubico",
     "Yubikey"
   ],
-  "ignorePaths": [
-    "node_modules/**",
-    "build/**",
-    ".docusaurus/**",
-    "static/img/**"
-  ],
+  "ignorePaths": ["node_modules/**", "build/**", ".docusaurus/**", "static/img/**"],
   "ignoreWords": [
     "ABAC",
     "AIDAEXAMPLEUSERID",
