@@ -16,9 +16,9 @@ The lab walks through building a complete, self-contained auto-scaling ecosystem
 
 When you build out your ASG infrastructure, the console divides the process into distinct configuration pillars:
 
-- **The Blueprint Specification**: When creating ASG, you have the option to select/create a launch template. You define the DNA of your instances (Amazon Linux 2023 AMI, t3.micro sizing, standard 8GB EBS boot volume and Bootstrap shell script in the **User Data** field). For example I created a new Laucnh Template called `MyDemoTemplate` with specification below:
+- **The Blueprint Specification**: When creating ASG, you have the option to select/create a launch template. You define the DNA of your instances (Amazon Linux 2023 AMI, t3.micro sizing, standard 8GB EBS boot volume and Bootstrap shell script in the **User Data** field). For example I created a new Launch Template called `MyDemoTemplate` with specification below:
   ![Launch Template Configuration](./img/launch-template-configuration.png)
-- **The Subnet Mapping**: You pick your target VPC and explicitly check multiple AZs. Stephance chose **Balanced Best Effort**, which tells the ASG to intelligently distribute your instances across all checked AZs to ensure maximum fault isolation and high availability.
+- **The Subnet Mapping**: You pick your target VPC and explicitly check multiple AZs. Stephane chose **Balanced Best Effort**, which tells the ASG to intelligently distribute your instances across all checked AZs to ensure maximum fault isolation and high availability.
 - **The Target Group Handshake**: Instead of manually registering instances to your load balancer like we did in the ELB labs, you simply point the ASG directly to your ALB Target Group (`demo-tg-alb`). The ASG takes over the registration heavy lifting instantly upon server boot.
   ![ASG Target Group Handshake](./img/asg-target-group-handshake.png)
 
