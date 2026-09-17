@@ -1,0 +1,116 @@
+---
+title: How to setup Husky and Lint-Staged
+authors: [rendy]
+tags: [ci/cd]
+date: 2026-09-17
+---
+
+In modern software development, maintaining code quality and consistency across a team is crucial. When multiple developers work on a single codebase, differences in formatting, syntax styles, and simple errors can lead to messy pull requests and broken builds. This is where Git hooks, specifically pre-commit hooks, become incredibly valuable.
+
+Two of the most powerful tools in the JavaScript ecosystem for managing Git hooks and code quality are **Husky** and **Lint-Staged**.
+
+In this post, we'll explore what these tools are, why they are important, how to set them up, and how to test your configuration locally.
+
+{/* truncate */}
+
+## What are Husky and Lint-Staged?
+
+### Husky
+
+Husky is a tool that allows you to easily tie scripts to Git hooks. Git hooks are scripts that Git executes before or after events such as: `commit`, `push`, and `receive`. Husky makes it simple to manage these hooks within your `package.json` or as separate script files, ensuring they are automatically installed for everyone who works on the project.
+
+### Lint-Staged
+
+Lint-Staged is a tool that allows you to run linters (like ESLint, Prettier, or cspell) against staged git files and don't let it slip into your codebase. Running linters on the entire project can be slow. Lint-Staged solves this by only running checks on files that are actively being modified and staged for a commit.
+
+## Why is it Important?
+
+1. **Catches Errors Early**: By running linting, formatting, and spell checks on every commit, you catch simple mistakes before they even leave your local machine or trigger a CI build.
+2. **Enforces Consistency**: It ensures that all code pushed to the repository adheres to the team's defined standards (e.g., Prettier formatting, ESLint rules).
+3. **Improves Code Reviews**: When the code is consistently formatted, code reviews can focus on the actual logic and architecture rather than nitpicking spacing or syntax issues.
+4. **Saves CI Time**: Failing fast locally means your continuous integration (CI) pipeline doesn't have to waste time running jobs that fail on trivial style errors.
+
+## How to Set It Up
+
+Let's walk through setting up Husky and Lint-Staged to run ESLint, Prettier, and a spell checker (`cspell`) on pre-commit.
+
+### 1. Install Dependencies
+
+First, ensure you have Husky, Lint-Staged, and your desired linters installed as `devDependencies`:
+
+```bash
+npm install --save-dev husky lint-staged eslint prettier cspell
+```
+
+### 2. Initialize Husky
+
+Run the Husky initialization script. This sets up the `.husky` directory and prepares Git to use it:
+
+```bash
+npx husky init
+```
+
+This command typically adds a `prepare` script in your `package.json` to ensure Husky is installed automatically after `npm install`.
+
+```json
+{
+  "scripts": {
+    "prepare": "husky"
+  }
+}
+```
+
+### 3. Create a Pre-commit Hook
+
+Next, we need to instruct Husky to run `lint-staged` before every commit.
+
+If `npx husky init` created a default `pre-commit` hook (usually echoing something or running `npm test`), you can overwrite it. Run the following command or edit the `.husky/pre-commit` file directly:
+
+```bash
+echo "npx lint-staged" > .husky/pre-commit
+```
+
+### 4. Configure Lint-Staged
+
+Finally, configure `lint-staged` in your `package.json` to define which tools run on which files. Here is an example configuration:
+
+```json
+{
+  "lint-staged": {
+    "**/*.{md,mdx}": "cspell lint",
+    "**/*.{js,jsx,ts,tsx,json,md,mdx,css}": "prettier --write",
+    "src/**/*.{js,jsx,ts,tsx}": "eslint"
+  }
+}
+```
+
+**Explanation of the config:**
+
+- `**/*.{md,mdx}`: Runs the spell checker (`cspell`) on all Markdown and MDX files.
+- `**/*.{js,jsx,ts,tsx,json,md,mdx,css}`: Runs Prettier to automatically format code. The `--write` flag tells Prettier to save the formatted changes back to the files.
+- `src/**/*.{js,jsx,ts,tsx}`: Runs ESLint on your source code to catch potential logic errors or rule violations.
+
+## How to Test It Locally
+
+Once configured, testing the setup is straightforward.
+
+1. **Make a Change**: Modify a file that matches your lint-staged configuration. For example, add some unformatted code to a JavaScript file or a typo to a Markdown file.
+2. **Stage the File**:
+   ```bash
+   git add path/to/your/file.js
+   ```
+3. **Attempt a Commit**:
+   ```bash
+   git commit -m "Test husky setup"
+   ```
+
+**What should happen?**
+
+- Husky intercepts the commit process.
+- It executes `npx lint-staged`.
+- Lint-Staged looks at the staged file (`file.js`).
+- It runs the configured tools (e.g., `prettier --write` and `eslint`).
+- **If everything passes:** The formatted file is added to the commit, and the commit succeeds.
+- **If a linter fails (e.g., ESLint finds an error):** The commit is aborted, and the error output is displayed in your terminal, forcing you to fix the issue before committing again.
+
+By setting up Husky and Lint-Staged, you automate quality control directly within the developer workflow, leading to cleaner codebases and more efficient teams. Happy coding!
