@@ -13,6 +13,7 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     title: 'Technical Portfolio',
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     Svg: require('@site/static/img/undraw_code_typing.svg').default,
     description: (
       <>
@@ -23,6 +24,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Extensive Documentation',
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     Svg: require('@site/static/img/undraw_files.svg').default,
     description: (
       <>
@@ -33,6 +35,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Open Knowledge',
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     Svg: require('@site/static/img/undraw_community.svg').default,
     description: (
       <>
