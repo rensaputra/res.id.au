@@ -43,12 +43,12 @@ Navigate straight inside the `lib/` directory, clear out the default placeholder
 #### Import the necessary CDK modules and AWS service libraries:
 
 ```javascript
-const cdk = require("aws-cdk-lib");
-const s3 = require("aws-cdk-lib/aws-s3");
-const iam = require("aws-cdk-lib/aws-iam");
-const lambda = require("aws-cdk-lib/aws-lambda");
-const lambdaEventSource = require("aws-cdk-lib/aws-lambda-event-sources");
-const dynamodb = require("aws-cdk-lib/aws-dynamodb");
+const cdk = require('aws-cdk-lib');
+const s3 = require('aws-cdk-lib/aws-s3');
+const iam = require('aws-cdk-lib/aws-iam');
+const lambda = require('aws-cdk-lib/aws-lambda');
+const lambdaEventSource = require('aws-cdk-lib/aws-lambda-event-sources');
+const dynamodb = require('aws-cdk-lib/aws-dynamodb');
 ```
 
 At the top of the file, we import the core CDK module and the specific AWS service libraries we will be using: S3, IAM, Lambda, Lambda Event Sources, and DynamoDB.
@@ -59,7 +59,7 @@ At the top of the file, we import the core CDK module and the specific AWS servi
 const bucket = new s3.Bucket(this, imageBucket, {
   removalPolicy: cdk.RemovalPolicy.DESTROY,
 });
-new cdk.CfnOutput(this, "Bucket", { value: bucket.bucketName });
+new cdk.CfnOutput(this, 'Bucket', { value: bucket.bucketName });
 ```
 
 - _The Cloud Win:_ Normal S3 buckets will throw a deletion failure if you try to delete a stack while they contain data. By setting `autoDeleteObjects: true`, the CDK automatically injects a hidden, automated Lambda function under the hood that purges your testing files the exact microsecond you destroy the stack.
@@ -69,19 +69,14 @@ new cdk.CfnOutput(this, "Bucket", { value: bucket.bucketName });
 #### Role for AWS Lambda
 
 ```javascript
-const role = new iam.Role(this, "cdk-rekn-lambdarole", {
-  assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+const role = new iam.Role(this, 'cdk-rekn-lambdarole', {
+  assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
 });
 role.addToPolicy(
   new iam.PolicyStatement({
     effect: iam.Effect.ALLOW,
-    actions: [
-      "rekognition:*",
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents",
-    ],
-    resources: ["*"],
+    actions: ['rekognition:*', 'logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents'],
+    resources: ['*'],
   }),
 );
 ```
@@ -92,11 +87,11 @@ role.addToPolicy(
 #### DynamoDB Table Creation
 
 ```javascript
-const table = new dynamodb.Table(this, "cdk-rekn-imagetable", {
-  partitionKey: { name: "Image", type: dynamodb.AttributeType.STRING },
+const table = new dynamodb.Table(this, 'cdk-rekn-imagetable', {
+  partitionKey: { name: 'Image', type: dynamodb.AttributeType.STRING },
   removalPolicy: cdk.RemovalPolicy.DESTROY,
 });
-new cdk.CfnOutput(this, "Table", { value: table.tableName });
+new cdk.CfnOutput(this, 'Table', { value: table.tableName });
 ```
 
 - This creates a new DynamoDB table with a partition key named "Image" of type string and 'cdk-rekn-imagetable' as the table name. The removal policy is set to destroy, which means that the table will be deleted when the stack is deleted. The table name is outputted to the terminal after deployment.
@@ -104,10 +99,10 @@ new cdk.CfnOutput(this, "Table", { value: table.tableName });
 #### 🧠 Native Event-Driven Lambda Hooks
 
 ```javascript
-const lambdaFn = new lambda.Function(this, "cdk-rekn-function", {
-  code: lambda.AssetCode.fromAsset("lambda"), // The code for the Lambda function is located in the "lambda" directory.
+const lambdaFn = new lambda.Function(this, 'cdk-rekn-function', {
+  code: lambda.AssetCode.fromAsset('lambda'), // The code for the Lambda function is located in the "lambda" directory.
   runtime: lambda.Runtime.PYTHON_3_8,
-  handler: "index.handler", // The entry point for the Lambda function is the "handler" function in the "index.py" file.
+  handler: 'index.handler', // The entry point for the Lambda function is the "handler" function in the "index.py" file.
   role: role,
   environment: {
     TABLE: table.tableName,

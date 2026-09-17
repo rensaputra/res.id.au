@@ -33,16 +33,16 @@ Let's summarize the step-by-step execution playbook, the code mechanisms, and th
 Because the environment variable stored in the Lambda runtime is now an encrypted cipher blob, your code must explicitly decrypt it at runtime using the AWS SDK and the `kms:Decrypt` API. Here's a Node.js example:
 
 ```javascript
-import { KMSClient, DecryptCommand } from "@aws-sdk/client-kms";
+import { KMSClient, DecryptCommand } from '@aws-sdk/client-kms';
 
-const client = new KMSClient({ region: "ap-southeast-2" });
+const client = new KMSClient({ region: 'ap-southeast-2' });
 const ENCRYPTED_DB_PASSWORD = process.env.DB_PASSWORD;
 
 async function decryptEnvVar(name) {
   try {
     const encrypted = process.env[name];
     const req = {
-      CiphertextBlob: Buffer.from(encrypted, "base64"),
+      CiphertextBlob: Buffer.from(encrypted, 'base64'),
       EncryptionContext: {
         LambdaFunctionName: process.env.AWS_LAMBDA_FUNCTION_NAME,
       },
@@ -54,17 +54,17 @@ async function decryptEnvVar(name) {
     process.env[name] = decrypted;
     return decrypted;
   } catch (err) {
-    console.log("Decrypt error:", err);
+    console.log('Decrypt error:', err);
     throw err;
   }
 }
 
-await decryptEnvVar("DB_PASSWORD");
+await decryptEnvVar('DB_PASSWORD');
 
 export const handler = async (event) => {
-  console.log("Encrypted Password: ", ENCRYPTED_DB_PASSWORD);
-  console.log("Decrypted Password: ", process.env.DB_PASSWORD);
-  return "Pass";
+  console.log('Encrypted Password: ', ENCRYPTED_DB_PASSWORD);
+  console.log('Decrypted Password: ', process.env.DB_PASSWORD);
+  return 'Pass';
 };
 ```
 

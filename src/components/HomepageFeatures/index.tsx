@@ -1,39 +1,42 @@
-import type { ReactNode } from "react";
-import clsx from "clsx";
-import Heading from "@theme/Heading";
-import styles from "./styles.module.css";
+import type { ReactNode } from 'react';
+import clsx from 'clsx';
+import Heading from '@theme/Heading';
+import styles from './styles.module.css';
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<"svg">>;
+  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
   description: ReactNode;
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: "Technical Portfolio",
-    Svg: require("@site/static/img/undraw_code_typing.svg").default,
+    title: 'Technical Portfolio',
+    Svg: require('@site/static/img/undraw_code_typing.svg').default,
     description: (
       <>
-        Explore my professional background, showcase of past projects, and hands-on experience in software engineering and cloud architecture.
+        Explore my professional background, showcase of past projects, and hands-on experience in
+        software engineering and cloud architecture.
       </>
     ),
   },
   {
-    title: "Extensive Documentation",
-    Svg: require("@site/static/img/undraw_files.svg").default,
+    title: 'Extensive Documentation',
+    Svg: require('@site/static/img/undraw_files.svg').default,
     description: (
       <>
-        Deep dive into detailed technical guides, tutorials, and structured notes on AWS, React, Node.js, and more.
+        Deep dive into detailed technical guides, tutorials, and structured notes on AWS, React,
+        Node.js, and more.
       </>
     ),
   },
   {
-    title: "Open Knowledge",
-    Svg: require("@site/static/img/undraw_community.svg").default,
+    title: 'Open Knowledge',
+    Svg: require('@site/static/img/undraw_community.svg').default,
     description: (
       <>
-        Built on the principle of sharing knowledge. All documentation is open source—contributions and feedback are always welcome.
+        Built on the principle of sharing knowledge. All documentation is open source—contributions
+        and feedback are always welcome.
       </>
     ),
   },
@@ -41,7 +44,7 @@ const FeatureList: FeatureItem[] = [
 
 function Feature({ title, Svg, description }: FeatureItem) {
   return (
-    <div className={clsx("col col--4")}>
+    <div className={clsx('col col--4')}>
       <div className="text--center">
         <Svg className={styles.featureSvg} role="img" />
       </div>

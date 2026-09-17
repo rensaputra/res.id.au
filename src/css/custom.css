@@ -15,8 +15,7 @@
 /* You can override the default Infima variables here. */
 :root {
   /* AWS Typography and Styling */
-  --ifm-font-family-base:
-    "Inter", "Helvetica Neue", Roboto, Arial, sans-serif;
+  --ifm-font-family-base: 'Inter', 'Helvetica Neue', Roboto, Arial, sans-serif;
   --ifm-global-radius: 2px;
   --ifm-heading-color: #16191f;
   --ifm-font-color-base: #16191f;
@@ -49,7 +48,7 @@
   --ifm-menu-color-background-hover: #f2f3f3;
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   /* Lighter AWS Blue Palette for Dark Mode Contrast */
   --ifm-color-primary: rgb(0, 108, 224);
   --ifm-color-primary-dark: #26afff;
@@ -93,12 +92,12 @@ a:hover {
   font-weight: 700;
   border-color: var(--ifm-color-primary);
 }
-[data-theme="dark"] .button--primary {
+[data-theme='dark'] .button--primary {
   color: #16191f !important;
 }
 
 /* Fix navbar search bar visibility in dark mode */
-[data-theme="dark"] .navbar__search-input {
+[data-theme='dark'] .navbar__search-input {
   background-color: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }

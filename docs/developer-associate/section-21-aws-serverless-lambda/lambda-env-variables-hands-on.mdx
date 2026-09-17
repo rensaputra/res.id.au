@@ -20,7 +20,7 @@ You write your core business logic **once**, and you let the infrastructure laye
 
 ```javascript
 export const handler = async (event) => {
-  const targetEnvironment = process.env.ENVIRONMENT_NAME || "local-sandbox";
+  const targetEnvironment = process.env.ENVIRONMENT_NAME || 'local-sandbox';
   const response = {
     statusCode: 200,
     body: JSON.stringify(`Hello from ${targetEnvironment}`),

@@ -61,13 +61,13 @@ Resources:
   - MyLambdaFunction:
       Type: AWS::Lambda::Function
       Properties:
-        Name: "production-payment-worker" # Required: The target Lambda function name
-        Alias: "PROD" # 👑 Required: The named target routing alias
-        CurrentVersion: "1" # Required: ❄️ The baseline stable version number
-        TargetVersion: "2" # Required: 🚀 The incoming candidate version number
+        Name: 'production-payment-worker' # Required: The target Lambda function name
+        Alias: 'PROD' # 👑 Required: The named target routing alias
+        CurrentVersion: '1' # Required: ❄️ The baseline stable version number
+        TargetVersion: '2' # Required: 🚀 The incoming candidate version number
 Hooks:
-  - PreTraffic: "BeforeAllowTrafficHookLambda" # Test before shifting traffic!
-  - PostTraffic: "AfterAllowTrafficHookLambda" # Test after shift completes!
+  - PreTraffic: 'BeforeAllowTrafficHookLambda' # Test before shifting traffic!
+  - PostTraffic: 'AfterAllowTrafficHookLambda' # Test after shift completes!
 ```
 
 ---

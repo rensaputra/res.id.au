@@ -13,7 +13,10 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
-    "spell-check": "cspell lint '**/*.{md,mdx}' --show-suggestions --show-context"
+    "spell-check": "cspell lint '**/*.{md,mdx}' --show-suggestions --show-context",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\""
   },
   "dependencies": {
     "@docusaurus/core": "^3.10.2",
@@ -37,11 +40,19 @@
     "@docusaurus/tsconfig": "^3.10.2",
     "@docusaurus/types": "^3.10.2",
     "@types/react": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.70.0",
+    "@typescript-eslint/parser": "^8.70.0",
     "autoprefixer": "^10.5.4",
     "cspell": "^10.0.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.5",
     "postcss": "^8.5.23",
+    "prettier": "^3.9.7",
     "tailwindcss": "^3.4.19",
     "typescript": "~6.0.2"
   },

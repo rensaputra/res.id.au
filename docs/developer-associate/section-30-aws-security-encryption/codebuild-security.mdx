@@ -35,16 +35,16 @@ version: 0.2
 env:
   # Plain text environment variables
   variables:
-    STAGE: "prod"
+    STAGE: 'prod'
 
   # Secrets fetched from SSM Parameter Store (SecureString / Plaintext)
   parameter-store:
-    DB_PASSWORD: "/CodeBuild/DBPassword"
+    DB_PASSWORD: '/CodeBuild/DBPassword'
 
   # Secrets fetched from AWS Secrets Manager
   secrets-manager:
-    API_KEY: "prod/my-api-keys:api_key" # secret-id:json-key
-    DB_SECRET: "prod/my-db-secret" # Entire secret payload
+    API_KEY: 'prod/my-api-keys:api_key' # secret-id:json-key
+    DB_SECRET: 'prod/my-db-secret' # Entire secret payload
 
 phases:
   build:

@@ -1,12 +1,12 @@
-const cdk = require("aws-cdk-lib");
+const cdk = require('aws-cdk-lib');
 
-const s3 = require("aws-cdk-lib/aws-s3");
-const iam = require("aws-cdk-lib/aws-iam");
-const lambda = require("aws-cdk-lib/aws-lambda");
-const lambdaEventSource = require("aws-cdk-lib/aws-lambda-event-sources");
-const dynamodb = require("aws-cdk-lib/aws-dynamodb");
+const s3 = require('aws-cdk-lib/aws-s3');
+const iam = require('aws-cdk-lib/aws-iam');
+const lambda = require('aws-cdk-lib/aws-lambda');
+const lambdaEventSource = require('aws-cdk-lib/aws-lambda-event-sources');
+const dynamodb = require('aws-cdk-lib/aws-dynamodb');
 
-const imageBucket = "cdk-rekn-imagebucket";
+const imageBucket = 'cdk-rekn-imagebucket';
 
 class CdkAppStack extends cdk.Stack {
   /**
@@ -26,43 +26,43 @@ class CdkAppStack extends cdk.Stack {
     const bucket = new s3.Bucket(this, imageBucket, {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
-    new cdk.CfnOutput(this, "Bucket", { value: bucket.bucketName });
+    new cdk.CfnOutput(this, 'Bucket', { value: bucket.bucketName });
 
     // ========================================
     // Role for AWS Lambda
     // ========================================
-    const role = new iam.Role(this, "cdk-rekn-lambdarole", {
-      assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+    const role = new iam.Role(this, 'cdk-rekn-lambdarole', {
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
     });
     role.addToPolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: [
-          "rekognition:*",
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents",
+          'rekognition:*',
+          'logs:CreateLogGroup',
+          'logs:CreateLogStream',
+          'logs:PutLogEvents',
         ],
-        resources: ["*"],
+        resources: ['*'],
       }),
     );
 
     // ========================================
     // DynamoDB table for storing image labels
     // ========================================
-    const table = new dynamodb.Table(this, "cdk-rekn-imagetable", {
-      partitionKey: { name: "Image", type: dynamodb.AttributeType.STRING },
+    const table = new dynamodb.Table(this, 'cdk-rekn-imagetable', {
+      partitionKey: { name: 'Image', type: dynamodb.AttributeType.STRING },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
-    new cdk.CfnOutput(this, "Table", { value: table.tableName });
+    new cdk.CfnOutput(this, 'Table', { value: table.tableName });
 
     // ========================================
     // AWS Lambda function
     // ========================================
-    const lambdaFn = new lambda.Function(this, "cdk-rekn-function", {
-      code: lambda.AssetCode.fromAsset("lambda"),
+    const lambdaFn = new lambda.Function(this, 'cdk-rekn-function', {
+      code: lambda.AssetCode.fromAsset('lambda'),
       runtime: lambda.Runtime.PYTHON_3_9,
-      handler: "index.handler",
+      handler: 'index.handler',
       role: role,
       environment: {
         TABLE: table.tableName,

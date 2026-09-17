@@ -22,13 +22,13 @@ Guardrails enforces **Denied Topics**, **Content Filters** (Hate, Violence, Sexu
 
 Guardrails operates as a multi-stage security pipeline inspecting incoming prompt payloads and outgoing generation streams:
 
-| Safeguard Layer | Technical Purpose & Operational Scope |
-| :--- | :--- |
-| 1. Denied Topics | Blocks domain-specific topics via natural language definitions & examples |
-| 2. Content Filters | Detects harmful content across 6 categories with configurable strengths |
-| 3. Sensitive Info (PII) | Redacts, masks, or blocks Personally Identifiable Information / RegEx |
-| 4. Word Filters | Blocks custom profanity lists, competitor mentions, or standard files |
-| 5. Contextual Grounding | Calculates hallucination & relevance scores against RAG source context |
+| Safeguard Layer         | Technical Purpose & Operational Scope                                     |
+| :---------------------- | :------------------------------------------------------------------------ |
+| 1. Denied Topics        | Blocks domain-specific topics via natural language definitions & examples |
+| 2. Content Filters      | Detects harmful content across 6 categories with configurable strengths   |
+| 3. Sensitive Info (PII) | Redacts, masks, or blocks Personally Identifiable Information / RegEx     |
+| 4. Word Filters         | Blocks custom profanity lists, competitor mentions, or standard files     |
+| 5. Contextual Grounding | Calculates hallucination & relevance scores against RAG source context    |
 
 ```mermaid
 graph TD

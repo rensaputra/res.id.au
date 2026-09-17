@@ -40,11 +40,11 @@ version: 0.2
 
 env:
   variables:
-    NODE_ENV: "production" # Plaintext variables, bro!
+    NODE_ENV: 'production' # Plaintext variables, bro!
   parameter-store:
-    DB_USER: "/prod/db/username" # Securely fetches strings from SSM Parameter Store
+    DB_USER: '/prod/db/username' # Securely fetches strings from SSM Parameter Store
   secrets-manager:
-    DB_PASS: "production/credentials:password" # Dynamically extracts secrets from Secrets Manager
+    DB_PASS: 'production/credentials:password' # Dynamically extracts secrets from Secrets Manager
 
 phases:
   install:
@@ -69,12 +69,12 @@ phases:
 
 artifacts:
   files:
-    - "**/*" # Instructs CodeBuild exactly which files to grab out of the container
-  base-directory: "dist" # Points to your compiled production asset directory
+    - '**/*' # Instructs CodeBuild exactly which files to grab out of the container
+  base-directory: 'dist' # Points to your compiled production asset directory
 
 cache:
   paths:
-    - "node_modules/**/*" # Caches expensive dependencies in an S3 back-bucket to accelerate future builds!
+    - 'node_modules/**/*' # Caches expensive dependencies in an S3 back-bucket to accelerate future builds!
 ```
 
 ---

@@ -71,7 +71,7 @@ def lambda_handler(event, context):
 ```javascript
 export const handler = async (event, context) => {
   // Extracting out of the global process execution state
-  const dbEndpoint = process.env.DATABASE_URL || "localhost";
+  const dbEndpoint = process.env.DATABASE_URL || 'localhost';
   console.log(`📦 Connecting straight to target: ${dbEndpoint}`);
 };
 ```

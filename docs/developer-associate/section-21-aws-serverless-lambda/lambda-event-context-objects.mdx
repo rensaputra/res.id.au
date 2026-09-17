@@ -44,7 +44,7 @@ Here is how you actually reference these two properties inside a standard server
 
 ```javascript
 // index.mjs - ES Module syntax (Node.js 18+)
-import { Buffer } from "buffer";
+import { Buffer } from 'buffer';
 
 /**
  * Modern Node.js Lambda Handler Hook
@@ -54,12 +54,10 @@ import { Buffer } from "buffer";
 export const handler = async (event, context) => {
   // 1. Inspecting the EVENT OBJECT (Service Workload Data)
   // The keys depend entirely on WHO or WHAT triggered this pipeline layer
-  const eventSource = event.source || "Unknown Upstream Driver";
-  const eventRegion = event.region || "Unknown Region Layer";
+  const eventSource = event.source || 'Unknown Upstream Driver';
+  const eventRegion = event.region || 'Unknown Region Layer';
 
-  console.log(
-    `⚡ Workload Event Ingested from: ${eventSource} in region: ${eventRegion}`,
-  );
+  console.log(`⚡ Workload Event Ingested from: ${eventSource} in region: ${eventRegion}`);
 
   // 2. Extracting the CONTEXT OBJECT (System Environment Metadata)
   // These keys stay completely stable regardless of the triggering source
@@ -71,21 +69,17 @@ export const handler = async (event, context) => {
   const msRemaining = context.getRemainingTimeInMillis();
 
   console.log(`📊 Environment metadata tracking ID: ${requestId}`);
-  console.log(
-    `⚙️ Runtime profile: Running ${funcName} with ${allocatedMemory}MB memory pool.`,
-  );
-  console.log(
-    `⏱️ Timeout Guardrail: Code has exactly ${msRemaining}ms left to execute.`,
-  );
+  console.log(`⚙️ Runtime profile: Running ${funcName} with ${allocatedMemory}MB memory pool.`);
+  console.log(`⏱️ Timeout Guardrail: Code has exactly ${msRemaining}ms left to execute.`);
 
   // 3. Crafting a compliant structural response mapping
   return {
     statusCode: 200,
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      message: "Execution metrics processed successfully inside Node.js, bro!",
+      message: 'Execution metrics processed successfully inside Node.js, bro!',
       correlationId: requestId,
     }),
   };

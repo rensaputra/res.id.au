@@ -1,5 +1,5 @@
-import React, { isValidElement, useState } from "react";
-import type { ReactNode, ReactElement } from "react";
+import React, { isValidElement, useState } from 'react';
+import type { ReactNode, ReactElement } from 'react';
 
 interface ImageProps {
   alt?: string;
@@ -12,17 +12,11 @@ interface ImageRowProps {
   [key: string]: unknown;
 }
 
-export default function ImageRow({
-  children,
-  className = "",
-  ...rest
-}: ImageRowProps) {
-  const [fullScreenImage, setFullScreenImage] = useState<ReactElement | null>(
-    null
-  );
+export default function ImageRow({ children, className = '', ...rest }: ImageRowProps) {
+  const [fullScreenImage, setFullScreenImage] = useState<ReactElement | null>(null);
 
-  const baseClasses = "flex justify-center gap-4 flex-wrap";
-  const combinedClasses = `${baseClasses}${className ? ` ${className}` : ""}`;
+  const baseClasses = 'flex justify-center gap-4 flex-wrap';
+  const combinedClasses = `${baseClasses}${className ? ` ${className}` : ''}`;
 
   return (
     <>

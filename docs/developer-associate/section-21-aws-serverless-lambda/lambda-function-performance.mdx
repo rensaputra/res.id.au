@@ -39,8 +39,8 @@ AWS keeps that exact container warm in memory for a short time after execution f
 
 ```javascript
 // BAD: This code re-negotiates a connection on EVERY SINGLE INVOCATION, bro!
-import os from "os";
-import { MyDatabaseClient } from "database-driver";
+import os from 'os';
+import { MyDatabaseClient } from 'database-driver';
 
 export const handler = async (event, context) => {
   // ⚠️ CRITICAL ERROR: This network handshake runs over and over again on warm hits!
@@ -65,8 +65,8 @@ export const handler = async (event, context) => {
 
 ```javascript
 // EXCELLENT: The heavy connection block runs EXACTLY ONCE during the Cold Start Init phase!
-import os from "os";
-import { MyDatabaseClient } from "database-driver";
+import os from 'os';
+import { MyDatabaseClient } from 'database-driver';
 
 // 1. This executes ONCE when the microVM container boots up from scratch
 const dbUrl = process.env.DATABASE_URL;

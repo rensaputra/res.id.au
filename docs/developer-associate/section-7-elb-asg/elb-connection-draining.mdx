@@ -9,21 +9,28 @@ Connection Draining (or **Deregistration Delay** as you'll it called on modern A
 ## Key Takeaways
 
 ### The Dynamic: In-Flight Safety
+
 When an instance is marked for removal (either because it failed a health check, you planned to take it down for updates, or an Auto Scaling Group is scaling down because traffic dropped). The load balancer flips that instance into a **"draining"** state.
+
 - **No New Traffic**: The ELB instantly stops sending any _new_ incoming requests to that instance.
 - **In-Flight Grace Period**: The ELB keeps the existing network pipes open just long enough for active users to finish their current transacions(like uploading a file, completing a checkout, or executing a heavy database query).
-![Connection Draining Diagram](./img/connection-draining-diagram.png)
+  ![Connection Draining Diagram](./img/connection-draining-diagram.png)
+
 ### Tuning the Deregistration Delay (The Developer Trade-Off)
+
 You configure this timer on the **Target Group** settings. The parameter range is highly testable:
+
 - **The Range**: You can set the timer anywhere from **1 to 3600 seconds** (1 hour).
 - **The Default**: OOTB, AWS sets this to **300 seconds (5 minutes)**.
 - **Turning it off**: Setting the value to `0` completely disables draining. The moment an instance is deregistered, all current connections are immediately terminated, resuling in `502 Bad Gateway` or `504 Gateway Timeout` errors for those active users.
-![Target Group Draining Interval](./img/target-group-draining-interval.png)
+  ![Target Group Draining Interval](./img/target-group-draining-interval.png)
+
 ### How to optimize the timer based on your app workload
-|Workload Type|Ideal Draining Timer|The Reasoning|
-|---------------|---------------------|-------------|
-|"Short Requests (e.g., REST APIs, microservices returning quick JSON payloads)"|Low (e.g., 20–30 seconds)|Your active users finish their requests in milliseconds. Setting a low timer lets AWS destroy the old instance rapidly, speeding up your deployment loops.|
-|"Long-Lived Requests (e.g., Heavy file uploads, video rendering, long streaming polls)"|High (e.g., 15–30+ minutes)|Prevents cutting off users in the middle of a massive file upload, but forces your automated deployment pipeline to wait longer to fully clean up old servers.|
+
+| Workload Type                                                                           | Ideal Draining Timer        | The Reasoning                                                                                                                                                  |
+| --------------------------------------------------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Short Requests (e.g., REST APIs, microservices returning quick JSON payloads)"         | Low (e.g., 20–30 seconds)   | Your active users finish their requests in milliseconds. Setting a low timer lets AWS destroy the old instance rapidly, speeding up your deployment loops.     |
+| "Long-Lived Requests (e.g., Heavy file uploads, video rendering, long streaming polls)" | High (e.g., 15–30+ minutes) | Prevents cutting off users in the middle of a massive file upload, but forces your automated deployment pipeline to wait longer to fully clean up old servers. |
 
 ## Exam Tips
 
