@@ -72,6 +72,8 @@
     "node": ">=20.0"
   },
   "lint-staged": {
-    "docs/**/*.{md,mdx}": "cspell lint"
+    "**/*.{md,mdx}": "cspell lint",
+    "**/*.{js,jsx,ts,tsx,json,md,mdx,css}": "prettier --write",
+    "src/**/*.{js,jsx,ts,tsx}": "eslint"
   }
 }

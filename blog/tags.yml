@@ -7,3 +7,6 @@ react:
 typescript:
   label: TypeScript
   description: TypeScript specific content
+ci/cd:
+  label: CI/CD
+  description: Continuous Integration and Continuous Deployment
