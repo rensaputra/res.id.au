@@ -20,24 +20,24 @@ To Secure an ALB, you add a brand new **Listener** directly to the front-end rul
 
 The Console exposes a dedicated dropdown for your **SSL Security Policy**.
 
-- **What it does**: This controls the exact negotation ciphers and protocol handshakes allowed between your clients and the load balancer.
+- **What it does**: This controls the exact negotiation ciphers and protocol handshakes allowed between your clients and the load balancer.
 - **Legacy vs Modern**: If you have ancient legacy clients or old mobile apps that don't support modern encryption, you can select an older, looser security policy. If your security compliance team demands absolute lockdown, you can pick a modern policy to force **TLS 1.3 only**.
   ![ALB Security Policy](./img/alb-security-policy.png)
 
 ### Certificate Sourcing Strategy
 
-Unfortunately, Stephane doesn't bring a live domain or pre-bought certificates during the quick demo, however he highligts the three pathways AWS gives you to srouce your X.509 keys:
+Unfortunately, Stephane doesn't bring a live domain or pre-bought certificates during the quick demo, however he highlights the three pathways AWS gives you to source your X.509 keys:
 
-- **From ACM (Amazon Certificate Manager)**: The absolute gold standard best practice. You just pick your domain's managed certificate out of a dropdown meny, and AWS handles auto-renewal for your completely free.
+- **From ACM (Amazon Certificate Manager)**: The absolute gold standard best practice. You just pick your domain's managed certificate out of a dropdown menu, and AWS handles auto-renewal for your completely free.
 - **From IAM**: An older legacy repository method. AWS explicitly tells you in the console that hosting public certificates inside IAM is **not recommended**.
 - **Direct Import**: If you bought an SSL certificate from an outside third-party vendor (like GoDaddy, Comodo, or DigiCert), you can click "import" and paste your raw PEM-encoded text blocks (Certificate Private key, Certificate Body and Certificate Chain) right into the text boxes. The console will instantly bundle them up and import them straight into ACM for you.
 
 ### The Layer 4 Equivalent (NLB TLS Listeners)
 
-The process for a NLB mirros the ALB, but with Layer 4 terminology:
+The process for a NLB mirrors the ALB, but with Layer 4 terminology:
 
 - Instead of picking an HTTP protocol, you create a **TLS Listener** on Port 443
-- The NLB pulls the same ACM certificates, handles the heavy decryption at the connection layer, and forwards the raw unencrypted TCP strem straight to your backend compute instances.
+- The NLB pulls the same ACM certificates, handles the heavy decryption at the connection layer, and forwards the raw unencrypted TCP stream straight to your backend compute instances.
 
 ## Exam Tips
 

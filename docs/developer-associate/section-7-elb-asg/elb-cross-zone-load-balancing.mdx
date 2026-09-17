@@ -36,6 +36,6 @@ This is exactly where the exam try to test your understanding of the default beh
 
 ## Exam Tips
 
-- **The Imbalance Target Alert**: If a question states, "You have a backend fleet behind an NLB where isntances in AZ-A are spiking to 100% CPU, while identical AZ-B are idling, even though your global request volume matches your total capacity", look for the answer that says: "Enable Cross-Zone Load Balancing on the NLB".
+- **The Imbalance Target Alert**: If a question states, "You have a backend fleet behind an NLB where instances in AZ-A are spiking to 100% CPU, while identical AZ-B are idling, even though your global request volume matches your total capacity", look for the answer that says: "Enable Cross-Zone Load Balancing on the NLB".
 
-- **The Cost Optimization Constraint**: If a scenario demands that you design an ultra-high throughput architecture handling hundreds of terabytes of data, but must keep **inter-AZ data transfer costs at absolute zero**, your place is to **use an NLB, leave cross-zone Load Balancing disbaled, and ensre your Auto Scaling Group deploys an equal number of identical across all utilized AZs**.
+- **The Cost Optimization Constraint**: If a scenario demands that you design an ultra-high throughput architecture handling hundreds of terabytes of data, but must keep **inter-AZ data transfer costs at absolute zero**, your place is to **use an NLB, leave cross-zone Load Balancing disabled, and ensure your Auto Scaling Group deploys an equal number of identical across all utilized AZs**.

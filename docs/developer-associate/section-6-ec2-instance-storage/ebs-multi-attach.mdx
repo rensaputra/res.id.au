@@ -17,7 +17,7 @@ sidebar_position: 9
 
 To use multi-attach, your architecture must check some incredibly strict boxes:
 
-- **The Family Constrant**: It is **exclusively available** for the provisioned IOPS families (`io1` and `io2`). You _cannot_ use it with `gp2`, `gp3` or HDD volumes.
+- **The Family Constraint**: It is **exclusively available** for the provisioned IOPS families (`io1` and `io2`). You _cannot_ use it with `gp2`, `gp3` or HDD volumes.
 - **AZ Locked**: Even with multi-attached turned on, the volume is still completely bound to a single AZ. All instances sharing the drive **must** reside in the exact same AZ.  
   ![](./img/ebs-multi-attach-az-lock.png)
 - **The Magic Number (16)**: You can concurrently attach the shared volume to a maximum of \*_16 EC2 instances_ at any one time.

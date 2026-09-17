@@ -18,9 +18,9 @@ ASG Scaling Policies provide the algorithmic decision engine that dictates when 
 
 - **Step Scaling (The Precise Multi-Tiered Approach)**: You create custom CloudWatch alarms that trigger tiered incremental adjustments based on the severity of the metric breach (e.g., "If CPU hits 60%, add 1 instance; if CPU spikes straight to 85%, add 4 instances immediately").
 
-- **Scheduled Scaling (The Known-Pattern Play)**: You hardcode explicit scaling actions to hit at precise calendar timelines based on predicatable human behaviour (e.g., "Add 3 instances every weekday at 8am when the office opens, and remove them at 6pm when everyone leaves").
+- **Scheduled Scaling (The Known-Pattern Play)**: You hardcode explicit scaling actions to hit at precise calendar timelines based on predictable human behaviour (e.g., "Add 3 instances every weekday at 8am when the office opens, and remove them at 6pm when everyone leaves").
 
-- **Predictive Scaling (The AI Forecast Engine)**: The ASG looks at a consecutive 14-day trailing history of resource utilization data, charts a continous machine-learning forecast line, and proactively boots instances _ahead_ of time so they are fully warm before cyclical rush hits.
+- **Predictive Scaling (The AI Forecast Engine)**: The ASG looks at a consecutive 14-day trailing history of resource utilization data, charts a continuous machine-learning forecast line, and proactively boots instances _ahead_ of time so they are fully warm before cyclical rush hits.
 
 ### Predefined Target Tracking Metrics
 
@@ -43,5 +43,5 @@ When using **Target Tracking**, you generally rely on one of these three standar
 
 Stephane lays out an incredibly critical cloud-native performance pattern that shows up repeatedly on the developer test:
 
-- **The Fast-Boot Architecture Pattern**: If a test scenario complains, "Our target tracking policies are scaling out our isntances, but under spike conditions, our website still drops connection requests because the new instances take over 7 minures to download dependencies and configure their software stacks before passing health checks", you need to accelerate the time-to-active. **The correct answer is to stop relying on heavy, long-running User Data bootstrap shell scripts. Instead, bake all your code, packages, and dependencies directly into a custom pre-configured AMI using tools like EC2 Image Builder/HashiCorp Packer.**
+- **The Fast-Boot Architecture Pattern**: If a test scenario complains, "Our target tracking policies are scaling out our instances, but under spike conditions, our website still drops connection requests because the new instances take over 7 minutes to download dependencies and configure their software stacks before passing health checks", you need to accelerate the time-to-active. **The correct answer is to stop relying on heavy, long-running User Data bootstrap shell scripts. Instead, bake all your code, packages, and dependencies directly into a custom pre-configured AMI using tools like EC2 Image Builder/HashiCorp Packer.**
 - **Detailed Monitoring Requirement**: By default, standard EC2 metrics only report to CloudWatch every 5 minutes. If your business experiences rapid flash-floods of users, 5 minutes is an eternity. To make your scaling policies responsive, you must enable Detailed Monitoring on your ASG's Launch Template to force the instances to stream performance data every 60 seconds.
