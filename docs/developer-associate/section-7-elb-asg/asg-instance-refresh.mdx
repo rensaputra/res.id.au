@@ -12,14 +12,14 @@ Historically, if you updated your code or patched an AMI, updating your ASG mean
 
 ### High-Level Summary
 
-Instance Refresh is a native ASG orchestration tool used to update an entire server fleet automatically after a new version of a **Launch Template** is released (like pushing an application update or an OS security patch). Instead of dropping your site offline, the ASG executes a controlled rolling update - terminating a subset of old instances and spinning up new ones in waves until the entire fleet is fully modernized.
+Instance Refresh is a native ASG orchestration tool used to update an enire server fleet automatically after a new version of a **Launch Template** is released (like pushing an application update or an OS security patch). Instead of dropping your site offline, the ASG executes a controlled rolling update - terminating a subset of old instances and spinning up new ones in waves until the entire fleet is fully modernized.
 
 ### The Two Core Configuration Knobs
 
 To ensure your production site stays alive during the update, you must configure two vital parameters when triggering the StartInstanceRefresh API call:
 
 - **Minimum Healthy Percentage**: This is your structural safety floor during the rollout. It defines the minimum percentage of the ASG's desired capacity that _must_ remain completely online, healthy, and actively serving traffic at any given second during the refresh.
-  - _Example_: If your desired capacity is **10 instances** and you set this to **60%**, the ASG knows it has permission to terminate a maximum of **4 instances at a time** in the first wave. It will not touch the remaining 6 until the new replacements pass their health checks.
+  - _Example_: If your desired capacity is **10 instances** and you set this to **60%**, the ASG knows it has permission to terminate a maximum of **4 instances at a time** in the first wave. It will not touch the ramining 6 until the new replacements pass their health checks.
 - **Instance Warm-up Time**: This tells the ASG how long to pause and wait after a new instance boots up before assuming it is ready to handle real users. This gives your code ample time to run its User Data scripts, pull packages, and stabilize before the ASG moves on to terminate the next wave of old servers.
   ![Instance Refresh Diagram](./img/instance-refresh-diagram.png)
 

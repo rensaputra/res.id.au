@@ -1,4 +1,3 @@
-<!-- cspell:ignore BYOL -->
 ---
 sidebar_position: 10
 ---
@@ -24,7 +23,7 @@ The "Purchasing Options" looks a bit confusing at first, but at its core, it's j
 - **Physical Isolation**: Compliance & Licensing
   - **Dedicated Instances**: You run on hardware that is physically separated from other AWS customers, but you don't control the exact placement of your VMs.
   - **Dedicated Hosts**: You rent the entire physical server box. You have an absolute control over hardware configuration and instance placement.
-    - **Use case**: The only reason to use this is if you have strict compliance requirements or need to bring your own licenses (Bring Your Own License (BYOL)) for software that doesn't allow multi-tenant environments.
+    - **Use case**: The only reason to use this is if you have strict compliance requirements or need to bring your own licenses (BYOL) for software that doesn't allow multi-tenant environments.
 - **Capacity Reservations**: No discount
   - You pay full on-demand price to "lock down" a room in a specific AZ so you are guaranteed to have it when you launch your app.
   - **The Catch**: You are billed for it whether you are running an instance or not. It doesn't save you money; it just guarantees you won't hit an "out of capacity" error during peak events.
@@ -35,7 +34,7 @@ The "Purchasing Options" looks a bit confusing at first, but at its core, it's j
 | -------------------------------------------------------- | ----------------------------------- |
 | "Predictable, steady-state app running long-term"        | Reserved Instances or Savings Plans |
 | "Batch processing / stateless / cheap as possible"       | Spot Instances                      |
-| "Bring Your Own License (Bring Your Own License (BYOL)) / Per-core billing"       | Dedicated Hosts                     |
+| "Bring Your Own License (BYOL) / Per-core billing"       | Dedicated Hosts                     |
 | "Testing a new app / short-term / unpredictable traffic" | On-Demand                           |
 
 ## Price Comparison Example
