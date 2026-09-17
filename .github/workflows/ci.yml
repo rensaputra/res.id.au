@@ -27,7 +27,7 @@ jobs:
       - name: Check for typos
         uses: streetsidesoftware/cspell-action@v6
         with:
-          files: "docs/**/*.{md,mdx}"
+          files: 'docs/**/*.{md,mdx}'
 
       - name: Check Formatting (Prettier)
         run: npm run format:check
