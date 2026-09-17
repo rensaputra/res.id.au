@@ -25,7 +25,7 @@ Let's reiterate the key differences between EBS and EFS
 - **The Blueprint**: Acts like a massive, shared cloud network drive (like standard NAS storage).
 - **The Scaling Flex**: It is built from the the ground up to be mounted concurrently by **hundreds or thousands of EC2 instances across multiple AZs** simultaneously.
 - **OS Restriction**: It relies on the POSIX file system and the NDS protocol, meaning it is **exclusively compatible with Linux instances**.
-- **Cost Control**: It carries a significantly higher price tag than EBS. However, you can neutralize this by using **Storage Tiers and Lifecycle Policies** to automatically drift old, untouch files into cheaper Infrequent Access (IA) or Archive storage.  
+- **Cost Control**: It carries a significantly higher price tag than EBS. However, you can neutralize this by using **Storage Tiers and Lifecycle Policies** to automatically drift old, untouched files into cheaper Infrequent Access (IA) or Archive storage.
   ![EFS Backup Diagram](./img/efs-backup-diagram.png)
 
 ### EC2 Instance Store (Ephemeral Storage)

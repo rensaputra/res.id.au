@@ -34,6 +34,6 @@ Every ALB comes with a **Default Rule** (a catch-all that forwards unmatched tra
 
 - **The Security Group Troubleshooting Scenario**: If a scenario says, "You chained your EC2 SG to allow inbound traffic only from the ALB's SG, but now your target group health checks are failing and reporting 0 healthy hosts,: look for an answer pointing to a broken outbound rule. The **ALB's SG must have an outbound rule that allows traffic out of the EC2 instances on the health check port**.
 
-- **The Static Content Offloading Trap**: The exam loves to ask how to minimize load on backend EC2 instances when an application needs to server a static "Maintainance Underway" page or a customized "404 Not Found" page.
+- **The Static Content Offloading Trap**: The exam loves to ask how to minimize load on backend EC2 instances when an application needs to server a static "Maintenance Underway" page or a customized "404 Not Found" page.
   - _The Wrong Move_" Writing custom routing logic inside your Express/Next.js/Java backend code
   - _The Correct Move_: **Configure an ALB listener rule to return a fixed response natively at the load balancer level**. This offloads the entire computing strain from your servers!.

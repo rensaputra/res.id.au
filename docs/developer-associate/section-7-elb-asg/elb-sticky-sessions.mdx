@@ -41,6 +41,6 @@ Two distinct ways the stickiness cookie can be managed:
 
 ## Exam Tips
 
-- **The Cookie Name Gotcha**: If an exam question presents a snippet of application code or an architectral configuration where a developer is attempting to set up custom application based stickiness, but the ALB keeps throwing errors or ignoring the session, check the cookie name. **If they named their code's cookie `AWSALB`, it will fail because that namespace is explicitly reserved by AWS**.
+- **The Cookie Name Gotcha**: If an exam question presents a snippet of application code or an architectural configuration where a developer is attempting to set up custom application based stickiness, but the ALB keeps throwing errors or ignoring the session, check the cookie name. **If they named their code's cookie `AWSALB`, it will fail because that namespace is explicitly reserved by AWS**.
 
-- **The Operatioal Risk**: Always remember about **Imbalanced Load**. If you have an instance that gets paired with a "heavy user" or high-volume client API script, that single backend server can quickly spike to 100% CPU utilization while your other instances sit completelu idle.
+- **The Operational Risk**: Always remember about **Imbalanced Load**. If you have an instance that gets paired with a "heavy user" or high-volume client API script, that single backend server can quickly spike to 100% CPU utilization while your other instances sit completely idle.
