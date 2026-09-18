@@ -10,3 +10,24 @@ typescript:
 ci/cd:
   label: CI/CD
   description: Continuous Integration and Continuous Deployment
+lambda:
+  label: Lambda
+  description: AWS Lambda and serverless content
+dynamodb:
+  label: DynamoDB
+  description: AWS DynamoDB content
+ap-gateway:
+  label: API Gateway
+  description: AWS API Gateway content
+nodejs:
+  label: Node.js
+  description: Node.js content
+visitor-counter-api:
+  label: Visitor Counter API
+  description: Visitor Counter API content
+walkthrough:
+  label: Walkthrough
+  description: Step-by-step walkthroughs and tutorials
+api-gateway:
+  label: API Gateway
+  description: AWS API Gateway content
