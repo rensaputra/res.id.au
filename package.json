@@ -16,7 +16,8 @@
     "spell-check": "cspell lint '**/*.{md,mdx}' --show-suggestions --show-context",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\""
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
+    "prepare": "husky"
   },
   "dependencies": {
     "@docusaurus/core": "^3.10.2",
