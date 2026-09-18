@@ -5,13 +5,16 @@ tags: [walkthrough, lambda, dynamodb, api-gateway, nodejs, typescript, visitor-c
 date: 2026-09-18
 ---
 
-Built a high-performance, strongly typed AWS Lambda function backed by Amazon DynamoDB for atomic web visitor counting, triggered via Amazon API Gateway HTTP API (Payload v2).
+Inspired by [Cloud Resume Challenge](https://cloudresumechallenge.dev/docs/the-challenge/aws/#7-javascript), I started building a high-performance, strongly typed AWS Lambda function backed by Amazon DynamoDB for atomic web visitor counting, triggered via Amazon API Gateway HTTP API (Payload v2).
+
+Currently I have finished working on the Lambda function, and I am working towards the deployment of the API Gateway HTTP API and DynamoDB table. This post is a walkthrough of the source code, testing, and build process, that I and AI pair-programmed together. The source code is available on [GitHub](https://github.com/rensaputra/visitor-counter-api).
 
 {/* truncate */}
 
 ## What Was Built
 
 ### 1. Source Architecture
+
 - [`src/types.ts`](https://github.com/rensaputra/visitor-counter-api/blob/d180e02969a307162b1cab1ee1589d10396f2bd8/src/types.ts): Strongly typed models for `CounterRecord`, `CounterResponse`, `ErrorResponse`, and `AppConfig`.
 - [`src/config.ts`](https://github.com/rensaputra/visitor-counter-api/blob/d180e02969a307162b1cab1ee1589d10396f2bd8/src/config.ts): Environment variable loader for `TABLE_NAME`, `ALLOW_ORIGIN`, `DEFAULT_PAGE_ID`, and `AWS_REGION`.
 - [`src/utils.ts`](https://github.com/rensaputra/visitor-counter-api/blob/d180e02969a307162b1cab1ee1589d10396f2bd8/src/utils.ts): CORS headers, API Gateway v2 response builders, and `pageId` sanitization (validates characters and restricts max length to 128 characters).
@@ -30,6 +33,7 @@ Built a high-performance, strongly typed AWS Lambda function backed by Amazon Dy
   - Returns HTTP 500 for missing config or database errors.
 
 ### 2. Testing & Tooling
+
 - [`package.json`](https://github.com/rensaputra/visitor-counter-api/blob/d180e02969a307162b1cab1ee1589d10396f2bd8/package.json): Configured with `@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb`, `esbuild`, `jest`, `ts-jest`, and `aws-sdk-client-mock`.
 - [`jest.config.js`](https://github.com/rensaputra/visitor-counter-api/blob/d180e02969a307162b1cab1ee1589d10396f2bd8/jest.config.js): Unit test configuration with `ts-jest` and coverage thresholds.
 - [`tests/counter.test.ts`](https://github.com/rensaputra/visitor-counter-api/blob/d180e02969a307162b1cab1ee1589d10396f2bd8/tests/counter.test.ts): Unit tests for DynamoDB atomic increments and reads.
@@ -43,15 +47,19 @@ Built a high-performance, strongly typed AWS Lambda function backed by Amazon Dy
 ## Validation Results
 
 ### 1. TypeScript Strict Typecheck
+
 ```bash
 npm run typecheck
 ```
+
 > Passed with 0 errors.
 
 ### 2. Jest Test Suite with Coverage
+
 ```bash
 npm run test:coverage
 ```
+
 ```
 PASS tests/config.test.ts
 PASS tests/utils.test.ts
@@ -59,13 +67,13 @@ PASS tests/counter.test.ts
 PASS tests/handler.test.ts
 
 ------------|---------|----------|---------|---------|-------------------
-File        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+File        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 ------------|---------|----------|---------|---------|-------------------
-All files   |    96.8 |    90.69 |   85.71 |    96.8 |                   
- config.ts  |     100 |    88.88 |     100 |     100 |                   
- counter.ts |     100 |       80 |     100 |     100 |                   
- handler.ts |    93.1 |      100 |      50 |    93.1 |                   
- utils.ts   |   97.29 |    94.11 |     100 |   97.29 |                   
+All files   |    96.8 |    90.69 |   85.71 |    96.8 |
+ config.ts  |     100 |    88.88 |     100 |     100 |
+ counter.ts |     100 |       80 |     100 |     100 |
+ handler.ts |    93.1 |      100 |      50 |    93.1 |
+ utils.ts   |   97.29 |    94.11 |     100 |   97.29 |
 ------------|---------|----------|---------|---------|-------------------
 
 Test Suites: 4 passed, 4 total
@@ -73,8 +81,10 @@ Tests:       33 passed, 33 total
 ```
 
 ### 3. Build & Package Verification
+
 ```bash
 npm run package
 ```
+
 - Bundled via `esbuild` to CommonJS Node.js 20 target.
 - Produced `dist/visitor-counter.zip` (577 KB), verified `dist/index.js` exports `handler`.
