@@ -219,30 +219,23 @@ What is printed to the console?
 **Task**: Implement a payment dispatch processor using modern pattern matching for `instanceof` inside package `runtime_inspection`:
 
 1. Base class `Payment`:
-
-- Private field `amount` (`double`).
-- Constructor `public Payment(double amount)`.
-- Getter `public double getAmount()`.
-
+   - Private field `amount` (`double`).
+   - Constructor `public Payment(double amount)`.
+   - Getter `public double getAmount()`.
 2. Subclass `CreditCardPayment` extending `Payment`:
-
-- Private field `cardNumber` (`String`).
-- Constructor `public CreditCardPayment(double amount, String cardNumber)`.
-- Method `public String getCardNumber()`.
-
+   - Private field `cardNumber` (`String`).
+   - Constructor `public CreditCardPayment(double amount, String cardNumber)`.
+   - Method `public String getCardNumber()`.
 3. Subclass `CryptoPayment` extending `Payment`:
-
-- Private field `walletAddress` (`String`).
-- Constructor `public CryptoPayment(double amount, String walletAddress)`.
-- Method `public String getWalletAddress()`.
-
+   - Private field `walletAddress` (`String`).
+   - Constructor `public CryptoPayment(double amount, String walletAddress)`.
+   - Method `public String getWalletAddress()`.
 4. Utility class `PaymentProcessor`:
-
-- Method `public static String processPayment(Payment payment)`:
-- If `payment` is a `CreditCardPayment`, return: `"Card [cardNumber]: $[amount]"`
-- If `payment` is a `CryptoPayment`, return: `"Crypto [walletAddress]: $[amount]"`
-- If it is a generic `Payment`, return: `"Standard: $[amount]"`
-- Use pattern matching for `instanceof` to eliminate manual casts.
+   - Method `public static String processPayment(Payment payment)`:
+   - If `payment` is a `CreditCardPayment`, return: `"Card [cardNumber]: $[amount]"`
+   - If `payment` is a `CryptoPayment`, return: `"Crypto [walletAddress]: $[amount]"`
+   - If it is a generic `Payment`, return: `"Standard: $[amount]"`
+   - Use pattern matching for `instanceof` to eliminate manual casts.
 
 **Test Assertions**:
 
