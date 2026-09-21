@@ -235,7 +235,7 @@ const config: Config = {
       title: 'Home',
       logo: {
         alt: "Rendy E. Saputra's Site",
-        src: 'img/wolf.svg',
+        src: 'img/icon.svg',
       },
       items: [
         {
