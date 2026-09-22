@@ -1,3 +1,7 @@
+// Load environment variables from a local .env file (if present) so that
+// build-time values like VISITOR_COUNTER_API_BASE_URL are available during
+// local development. In CI, these are provided by the workflow environment.
+import 'dotenv/config';
 import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
@@ -130,6 +134,11 @@ const config: Config = {
   projectName: 'res.id.au', // Usually your repo name.
 
   onBrokenLinks: 'throw',
+
+  // Build-time values exposed to the client bundle.
+  customFields: {
+    visitorCounterApiBaseUrl: process.env.VISITOR_COUNTER_API_BASE_URL || '',
+  },
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you

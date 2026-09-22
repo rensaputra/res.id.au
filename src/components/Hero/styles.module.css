@@ -17,3 +17,10 @@
 .button-secondary {
   @apply inline-flex items-center justify-center gap-2 rounded-full bg-[#1e293b]/50 border border-solid border-neutral-400 px-4 py-2 text-white hover:bg-[#1e293b]/70 hover:border-neutral-300 hover:text-white;
 }
+.visitorCounter {
+  @apply text-neutral-400 text-center tracking-wide;
+}
+
+.visitorCounterPlaceholder {
+  @apply text-center tracking-wide opacity-0;
+}

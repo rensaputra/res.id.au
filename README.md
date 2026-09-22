@@ -74,3 +74,23 @@ To enable this feature, you must configure a repository secret:
 3. Create a new repository secret named `INDEXNOW_KEY` and paste your key as the value.
 
 If the secret is not set, the IndexNow submission steps in the deployment workflow will simply be skipped.
+
+### Visitor Counter Integration
+
+The homepage Hero component displays a visitor counter backed by a REST API (AWS API Gateway + Lambda + DynamoDB). The API base URL is read at build time from the `VISITOR_COUNTER_API_BASE_URL` environment variable and exposed to the client bundle via `customFields` in `docusaurus.config.ts`.
+
+> **Note:** Keep the trailing slash on the URL. The staged API Gateway endpoint requires it to resolve.
+
+**Local development:** copy `.env.example` to `.env` and set the value. The `.env` file is loaded automatically via `dotenv`:
+
+```bash
+cp .env.example .env
+```
+
+**GitHub Actions:** define the variable so the deployment build points at the correct backend:
+
+1. Go to your GitHub repository **Settings** > **Secrets and variables** > **Actions**.
+2. Open the **Variables** tab and click **New repository variable**.
+3. Name it `VISITOR_COUNTER_API_BASE_URL` and set the value to your API base URL (including the trailing slash).
+
+If the variable is not set, the build falls back to the default stage defined in `docusaurus.config.ts`.
