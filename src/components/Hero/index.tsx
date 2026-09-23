@@ -3,13 +3,19 @@ import styles from './styles.module.css';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
+import VisitorCounter from './VisitorCounter';
+import { useVisitorCount } from './VisitorCounter/useVisitorCount';
 
 export default function Hero() {
   const avatarUrl = useBaseUrl('/images/ava.jpg');
+  const { siteConfig } = useDocusaurusContext();
+  const baseUrl = siteConfig.customFields?.visitorCounterApiBaseUrl as string | undefined;
+  const state = useVisitorCount(baseUrl);
 
   return (
-    <header className={clsx(styles.hero, 'py-8 bg-gradient-to-r from-[#1b2733] to-[#442d34]')}>
+    <header className={clsx(styles.hero, 'pt-8 bg-gradient-to-r from-[#1b2733] to-[#442d34]')}>
       <div className="max-w-4xl mx-auto px-4 text-center">
         <div className="flex flex-col items-center justify-center">
           <div className="h-32 w-32 overflow-hidden rounded-full border-2 border-white mb-4">
@@ -85,6 +91,7 @@ export default function Hero() {
           </a>
         </span>
       </div>
+      <VisitorCounter state={state} />
     </header>
   );
 }
