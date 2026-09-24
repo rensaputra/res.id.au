@@ -56,46 +56,39 @@ describe('Hero visitor counter integration', () => {
   });
 
   // Req 3.1: while the increment request is in flight, the counter shows the
-  // aria-hidden placeholder and no final count.
-  describe('placeholder while loading', () => {
-    it('renders the placeholder and no final count while the request is pending', () => {
+  // loading spinner and no final count.
+  describe('spinner while loading', () => {
+    it('renders the spinner and no final count while the request is pending', () => {
       // A promise that never resolves keeps the hook in the loading state.
       mockedIncrementCount.mockReturnValue(new Promise<ApiResponse>(() => {}));
 
       const { container } = render(<Hero />);
 
-      const placeholder = container.querySelector('p[aria-hidden="true"]');
-      expect(placeholder).not.toBeNull();
-      // Placeholder carries no visible count text.
-      expect(placeholder?.textContent).not.toContain('You are visitor');
+      const spinner = container.querySelector('[role="status"]');
+      expect(spinner).not.toBeNull();
+      // No visitor count is shown while loading.
       expect(container.textContent).not.toContain('You are visitor');
     });
   });
 
-  // Req 2.4: on success, the counter node is inside the max-w-4xl container and
-  // ordered after the intro paragraph.
+  // Req 2.4: on success, the counter sits at the bottom of the hero header,
+  // after (and outside) the max-w-4xl intro container.
   describe('placement on success', () => {
-    it('renders the counter inside the max-w-4xl container after the intro paragraph', async () => {
+    it('renders the counter at the bottom of the hero, after the intro container', async () => {
       mockedIncrementCount.mockResolvedValue({ count: 1234 } as ApiResponse);
 
       const { container } = render(<Hero />);
 
       const counter = await screen.findByText('You are visitor #1,234');
 
-      // Inside the max-w-4xl container.
+      // The counter lives outside the centered intro container.
       const containerDiv = container.querySelector('div.max-w-4xl');
       expect(containerDiv).not.toBeNull();
-      expect(containerDiv?.contains(counter)).toBe(true);
+      expect(containerDiv?.contains(counter)).toBe(false);
 
-      // Ordered after the intro paragraph. The intro <p> is a direct child of
-      // the container; the counter is the last child, following it in DOM order.
-      const introParagraph = Array.from(containerDiv!.querySelectorAll('p')).find((p) =>
-        p.textContent?.includes('Senior Software Engineer'),
-      );
-      expect(introParagraph).toBeTruthy();
-
-      const position = introParagraph!.compareDocumentPosition(counter);
-      // DOCUMENT_POSITION_FOLLOWING (4) means `counter` comes after the intro <p>.
+      // Ordered after the intro container in DOM order (bottom of the header).
+      const position = containerDiv!.compareDocumentPosition(counter);
+      // DOCUMENT_POSITION_FOLLOWING (4) means `counter` comes after the container.
       expect(position & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     });
   });
@@ -131,8 +124,8 @@ describe('Hero visitor counter integration', () => {
       // Single line: the counter is a single <p> element.
       expect(counter.tagName).toBe('P');
 
-      // Muted utilities applied via clsx (mt-2 text-sm text-gray-400).
-      expect(counter.classList.contains('mt-2')).toBe(true);
+      // Muted utilities applied via clsx (my-2 text-sm text-gray-400).
+      expect(counter.classList.contains('my-2')).toBe(true);
       expect(counter.classList.contains('text-sm')).toBe(true);
       expect(counter.classList.contains('text-gray-400')).toBe(true);
     });
