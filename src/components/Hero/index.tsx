@@ -91,7 +91,7 @@ export default function Hero() {
           </a>
         </span>
       </div>
-      <VisitorCounter state={state} />
+      <VisitorCounter className="my-2 text-sm text-gray-400" state={state} />
     </header>
   );
 }

@@ -42,11 +42,11 @@ describe('Feature: hero-visitor-counter, Property 4: State-driven rendering is e
           expect(container.textContent).toBe('');
           expect(paragraphs.length).toBe(0);
         } else if (state.status === 'loading') {
-          // Exactly one placeholder paragraph, marked aria-hidden, no count.
-          expect(paragraphs.length).toBe(1);
-          const placeholder = paragraphs[0];
-          expect(placeholder.getAttribute('aria-hidden')).toBe('true');
-          expect(placeholder.textContent).not.toContain('You are visitor');
+          // A single spinner status element, no visitor line and no count text.
+          const spinners = container.querySelectorAll('[role="status"]');
+          expect(spinners.length).toBe(1);
+          expect(paragraphs.length).toBe(0);
+          expect(container.textContent).not.toContain('You are visitor');
         } else {
           // Exactly one line containing the visitor phrase and formatted count.
           expect(paragraphs.length).toBe(1);

@@ -16,6 +16,9 @@ export default defineConfig({
     // stub modules so component tests can import (and `vi.mock`) them. Tests
     // that need specific behavior override these stubs with `vi.mock`.
     alias: {
+      // Docusaurus maps `@site` to the project root. Mirror that here so
+      // component imports like `@site/src/components/...` resolve under Vitest.
+      '@site': fileURLToPath(new URL('.', import.meta.url)),
       '@docusaurus/Link': fileURLToPath(
         new URL('./src/test/stubs/docusaurus-link.tsx', import.meta.url),
       ),
