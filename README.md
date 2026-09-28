@@ -36,6 +36,30 @@ npm run build
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
 
+## API Documentation
+
+Interactive API reference docs are served under the `/api` route, generated from an OpenAPI spec using [`docusaurus-openapi-docs`](https://github.com/PaloAltoNetworks/docusaurus-openapi-docs). The API lives in its own docs plugin instance, separate from the `/docs` section.
+
+**Source of truth:** the OpenAPI spec at `openapi/visitor-counter-api.json`. Edit this file to change the API docs.
+
+**Generated output is not committed.** The reference pages (`api/*.api.mdx`, `api/*.info.mdx`, `api/*.tag.mdx`, `api/sidebar.ts`, and the `*.json` fragments) are regenerated on every build and are gitignored. Only the hand-authored `api/sidebars.ts` wrapper is tracked — it keys the generated sidebar array under `apiSidebar` so the navbar link and docs instance can resolve it.
+
+Because generation runs automatically, `npm run build` produces the API docs with no extra steps:
+
+```bash
+npm run build   # runs `docusaurus gen-api-docs myapi` then `docusaurus build`
+```
+
+For local iteration on the spec, regenerate the pages manually, then start the dev server:
+
+```bash
+npm run gen-api     # regenerate from openapi/visitor-counter-api.json
+npm run clean-api   # remove the generated files
+npm start
+```
+
+> **Note:** After editing the spec, run `npm run gen-api` to see changes reflected under `/api`. To group operations into a named sidebar category instead of `UNTAGGED`, add a `tags` array to each operation in the spec.
+
 ## Deployment
 
 Using SSH:
