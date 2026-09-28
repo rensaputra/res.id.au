@@ -11,6 +11,15 @@ build/
 dist/
 coverage/
 
+# Generated OpenAPI docs (regenerated on build via `npm run gen-api`)
+# The api/sidebars.ts wrapper is hand-authored and stays tracked.
+api/sidebar.ts
+api/*.api.mdx
+api/*.info.mdx
+api/*.tag.mdx
+api/*.schema.mdx
+api/*.json
+
 # Node
 node_modules/
 .npm/
