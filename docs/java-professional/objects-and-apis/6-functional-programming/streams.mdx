@@ -16,13 +16,6 @@ The Java Stream API (`java.util.stream`) provides a functional approach to proce
 
 ```mermaid
 flowchart TD
-    subgraph SequentialStream ["Sequential Stream: stream()"]
-        direction LR
-        S1["Source (Array / Collection)"] --> S2["Stream Pipeline"]
-        S2 --> S3["Operation (e.g., map, filter)"]
-        S3 --> S4["Deterministic Sequential Output"]
-    end
-
     subgraph ParallelStream ["Parallel Stream: parallelStream() / parallel()"]
         direction LR
         P1["Source (Array / Collection)"] --> P2["Fork/Join Split"]
@@ -32,9 +25,15 @@ flowchart TD
         T1 & T2 & T3 --> P3["Non-Deterministic Concurrent Output"]
     end
 
+    subgraph SequentialStream ["Sequential Stream: stream()"]
+        direction LR
+        S1["Source (Array / Collection)"] --> S2["Stream Pipeline"]
+        S2 --> S3["Operation (e.g., map, filter)"]
+        S3 --> S4["Deterministic Sequential Output"]
+    end
+
     S1 -.->|Original Data Unchanged| Safe1["Immutability Guaranteed"]
     P1 -.->|Original Data Unchanged| Safe2["Immutability Guaranteed"]
-
 ```
 
 - **No Data Storage**: A stream is not a data structure; it does not store elements. It is an on-demand view that transfers items through computational transformations.
@@ -44,7 +43,7 @@ flowchart TD
 
 ---
 
-## Main Discussion / Deep Dive
+## Main Discussion
 
 ### Idiomatic Java Code Snippets
 
@@ -77,7 +76,6 @@ public class StreamTransformationDemo {
         // Output: [2, 4, 6, 8, 10]
     }
 }
-
 ```
 
 #### 2. Sequential vs. Parallel Processing
@@ -106,7 +104,6 @@ public class ParallelStreamDemo {
              .forEach(item -> System.out.println(Thread.currentThread().getName() + " -> " + item));
     }
 }
-
 ```
 
 ### Under the Hood / JVM Mechanics
@@ -151,7 +148,7 @@ public class ParallelStreamDemo {
 
 ## Knowledge Check & JetBrains-Style Coding Challenges
 
-### Exam / Theory Tips
+### Theory Tips
 
 - **No Storage Invariant**: Streams do not store elements; they convey elements from a source through a computational pipeline.
 - **Non-Destructive Contract**: Performing transformations (like mapping or filtering) on a stream never modifies the original array or collection.
@@ -175,7 +172,6 @@ public class StreamCheck {
         System.out.println(numbers[0] + " " + numbers[1] + " " + numbers[2]);
     }
 }
-
 ```
 
 What is printed to the console?
@@ -252,15 +248,13 @@ public class DataProcessor {
                .forEach(entry -> System.out.println(Thread.currentThread().getName() + " - " + entry));
     }
 }
-
 ```
 
 **Complexity Analysis**:
 
 - **Time Complexity**:
-- `getTransformedEvensToOdds`: $\mathcal{O}(N)$ where $N$ is the number of elements in the `evens` array. The stream processes each integer once.
-- `processInParallel`: $\mathcal{O}(N)$ total operations, with wall-clock execution distributed across up to $P$ CPU worker threads ($\approx \mathcal{O}(N/P)$ under optimal multi-core load).
-
+  - `getTransformedEvensToOdds`: $\mathcal{O}(N)$ where $N$ is the number of elements in the `evens` array. The stream processes each integer once.
+  - `processInParallel`: $\mathcal{O}(N)$ total operations, with wall-clock execution distributed across up to $P$ CPU worker threads ($\approx \mathcal{O}(N/P)$ under optimal multi-core load).
 - **Space Complexity**: $\mathcal{O}(N)$ auxiliary heap memory allocated for the new `int[]` array returned by `toArray()`, preserving source immutability.
 
 </details>
