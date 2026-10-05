@@ -1,6 +1,6 @@
 ---
 sidebar_position: 3
-title: Common Streams Operations
+title: Common Stream Operations
 description: 'A deep dive into the Java Stream API, focusing on intermediate vs. terminal operations, reductions, and collectors.'
 keywords:
   [
@@ -202,11 +202,11 @@ public class StreamReductionAndCollectionDemo {
 
 - **Reusing a Consumed Stream**: Attempting to call multiple terminal operations or another operation on a closed stream throws an `IllegalStateException: stream has already been operated upon or closed`:
 
-```java
-Stream<String> veggieStream = veggies.stream();
-veggieStream.forEach(System.out::println);
-veggieStream.filter(v -> v.startsWith("c")); // Throws IllegalStateException!
-```
+  ```java
+  Stream<String> veggieStream = veggies.stream();
+  veggieStream.forEach(System.out::println);
+  veggieStream.filter(v -> v.startsWith("c")); // Throws IllegalStateException!
+  ```
 
 - **Forgetting the Terminal Operation**: Writing `veggies.stream().filter(v -> v.length() > 5).map(String::toUpperCase);` without a terminal method causes nothing to happen. Intermediate operations do not run without a terminal trigger.
 - **Assuming Intermediate Operations Mutate Source Elements**: Expecting `veggies.stream().map(String::toUpperCase)` to make the strings in `veggies` uppercase. Source elements remain untouched; results must be extracted via `collect()` or `forEach()`.
@@ -218,8 +218,8 @@ veggieStream.filter(v -> v.startsWith("c")); // Throws IllegalStateException!
 ### Theory Tips
 
 - **Stream Classification**: Intermediate operations return a `Stream`; terminal operations return a concrete value, collection, or `void`, and close the stream.
-- **Identity in `reduce**`: The identity serves as both the seed starting value of the accumulation and the default return value if the stream is empty.
-- **Method References with `map**`: When an element is passed directly to an instance method without alteration, prefer method references (e.g., `map(String::toUpperCase)`over`map(s -> s.toUpperCase())`).
+- **Identity in `reduce`**: The identity serves as both the seed starting value of the accumulation and the default return value if the stream is empty.
+- **Method References with `map`**: When an element is passed directly to an instance method without alteration, prefer method references (e.g., `map(String::toUpperCase)`over`map(s -> s.toUpperCase())`).
 
 ### Question 1: Conceptual / Code Analysis
 
