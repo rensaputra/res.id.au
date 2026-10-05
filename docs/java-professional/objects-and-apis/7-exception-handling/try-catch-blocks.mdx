@@ -146,7 +146,7 @@ public class FileCreationDemo {
 ### Common Anti-Patterns & Edge Cases
 
 - **Ignoring Compile-Time Error for Checked Exceptions**: Invoking `file.createNewFile()` without enclosing it in a `try-catch` block results in an immediate compilation error: `unreported exception java.io.IOException; must be caught or declared to be thrown`.
-- **Mismatched Exception Type in `catch`**: If a `try`block throws an`IOException`, but the `catch`block specifies`ArrayIndexOutOfBoundsException`, the catch block will not execute; the unhandled exception causes the application to crash.
+- **Mismatched Exception Type in `catch`**: If a `try` block throws an`IOException`, but the `catch` block specifies`ArrayIndexOutOfBoundsException`, the catch block will not execute; the unhandled exception causes the application to crash.
 - **Empty Catch Blocks (Swallowing Exceptions)**: Writing `catch (IOException e) {}` without logging or notifying leaves the application unaware that an operation failed, making debugging difficult.
 - **Assuming `try` Code Executes After an Exception**: Once an instruction inside a `try` block throws an exception, all subsequent statements inside that `try` block are immediately skipped, jumping straight to the `catch` block.
 
