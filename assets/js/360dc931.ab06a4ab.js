@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkres_id_au||=[]).push([[26600],{27146(s){s.exports=JSON.parse('{"name":"docusaurus-plugin-content-docs","id":"api"}')}}]);
