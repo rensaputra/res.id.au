@@ -32,7 +32,7 @@ flowchart TD
 
 - **The "Catch or Specify" Contract**: Any checked exception (like `IOException`) must either be caught locally via `try-catch` or specified in the method signature using `throws`.
 - **Passing the Burden**: Declaring `throws` shifts the obligation of exception handling entirely to the calling method.
-- **Escalation to `main`**: If the `main`method specifies`throws` without handling the exception, escaping exceptions cause the JVM to terminate execution and dump a stack trace to standard error.
+- **Escalation to `main`**: If the `main` method specifies `throws` without handling the exception, escaping exceptions cause the JVM to terminate execution and dump a stack trace to standard error.
 - **Multiple Exception Signatures**: A method header can specify multiple exceptions separated by commas (e.g., `throws IOException, InterruptedException`).
 - **Polymorphic Coverage**: A `throws` clause stating a superclass (e.g., `throws IOException`) satisfies the compiler for any statement inside the method that throws a subclass of that type (e.g., `FileNotFoundException`).
 
