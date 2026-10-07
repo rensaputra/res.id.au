@@ -252,6 +252,7 @@
     "healthcheck",
     "idpresponse",
     "invokedynamic",
+    "invokestatic",
     "invokevirtual",
     "javac",
     "jdbc",
