@@ -256,6 +256,7 @@
     "idpresponse",
     "ifle",
     "invokedynamic",
+    "invokespecial",
     "invokestatic",
     "invokevirtual",
     "javac",
