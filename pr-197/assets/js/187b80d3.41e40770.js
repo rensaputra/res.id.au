@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkres_id_au||=[]).push([[86276],{90144(a){a.exports=JSON.parse('{"metadata":{"permalink":"/pr-197/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);
