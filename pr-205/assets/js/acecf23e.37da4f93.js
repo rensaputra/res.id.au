@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkres_id_au||=[]).push([[81903],{1912(s){s.exports=JSON.parse('{"blogBasePath":"/pr-205/blog","blogTitle":"Blog","authorsListPath":"/pr-205/blog/authors"}')}}]);
