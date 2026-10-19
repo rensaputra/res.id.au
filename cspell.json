@@ -38,6 +38,7 @@
     "consultable",
     "containerd",
     "CUDA",
+    "DBCP",
     "dealbreaker",
     "declaredly",
     "denoise",
@@ -78,6 +79,7 @@
     "mindmap",
     "misconfiguring",
     "misordering",
+    "nondeterministically",
     "OCFS",
     "Omnichannel",
     "Overfit",
@@ -186,6 +188,7 @@
     "HCTA",
     "HDFS",
     "HDNTW",
+    "HIKARICP",
     "HITL",
     "HSET",
     "HVMG",
@@ -195,6 +198,8 @@
     "Imam",
     "Impls",
     "JMES",
+    "Jaloo",
+    "Javassist",
     "Kend",
     "Kiro",
     "Klass",
@@ -285,6 +290,7 @@
     "endy",
     "ensurepath",
     "fileb",
+    "foobarbaz",
     "healthcheck",
     "idpresponse",
     "ifle",
@@ -325,6 +331,7 @@
     "rwxr",
     "samconfig",
     "signupuser",
+    "spdao",
     "stephane",
     "stephantheteacher",
     "textbf",
@@ -336,6 +343,7 @@
     "vxid",
     "xact",
     "yourdomain",
-    "yourname"
+    "yourname",
+    "zaxxer"
   ]
 }
