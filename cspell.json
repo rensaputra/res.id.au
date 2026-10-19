@@ -278,6 +278,7 @@
     "awslogs",
     "awsvpc",
     "ctid",
+    "datastax",
     "daxs",
     "dbeaver",
     "dcmpg",
