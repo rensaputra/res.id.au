@@ -38,6 +38,7 @@
     "consultable",
     "containerd",
     "CUDA",
+    "DBCP",
     "dealbreaker",
     "declaredly",
     "denoise",
@@ -187,6 +188,7 @@
     "HCTA",
     "HDFS",
     "HDNTW",
+    "HIKARICP",
     "HITL",
     "HSET",
     "HVMG",
@@ -197,6 +199,7 @@
     "Impls",
     "JMES",
     "Jaloo",
+    "Javassist",
     "Kend",
     "Kiro",
     "Klass",
@@ -340,6 +343,7 @@
     "vxid",
     "xact",
     "yourdomain",
-    "yourname"
+    "yourname",
+    "zaxxer"
   ]
 }
