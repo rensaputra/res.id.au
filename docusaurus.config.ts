@@ -366,6 +366,10 @@ const config: Config = {
               label: 'API',
               to: '/api/visitor-counter-api',
             },
+            {
+              label: 'Snippets',
+              to: '/snippets/intro',
+            },
           ],
         },
         {
