@@ -192,6 +192,15 @@ const config: Config = {
       },
     ],
     [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'snippets',
+        path: 'snippets',
+        routeBasePath: 'snippets',
+        sidebarPath: './snippets/sidebars.ts',
+      },
+    ],
+    [
       'docusaurus-plugin-openapi-docs',
       {
         id: 'openapi',
@@ -292,6 +301,13 @@ const config: Config = {
           docsPluginId: 'api',
           position: 'left',
           label: 'API',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'snippetsSidebar',
+          docsPluginId: 'snippets',
+          position: 'left',
+          label: 'Snippets',
         },
         {
           href: 'https://linkedin.com/in/rendyekasaputra/',
