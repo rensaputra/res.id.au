@@ -1,0 +1,122 @@
+---
+sidebar_position: 1
+title: Balanced Brackets
+---
+
+Given a string `str` consisting of characters such as `'(', ')', '{', '}', '[' and ']'`, determine if the input string is properly balanced.
+
+A string is considered balanced if:
+
+1. Each opening bracket is closed by the same type of bracket (e.g., `(` with `)`, `{` with `}`, and `[` with `]`)
+2. Open brackets are closed in the correct order (e.g., `([])` is valid, but `([)]` is not)
+3. Any subset of brackets enclosed within a matched pair must also form a valid matched pair (e.g., `{[(])}` is not balanced because the contents inside `{` and `}` are unbalanced)
+
+---
+
+## Input
+
+`str: string: A string`
+
+---
+
+## Examples
+
+```
+Input: str = "[]"
+Output: true
+Explanation: The string contains correctly paired and ordered parentheses.
+```
+
+```
+Input: str = "([)]"
+Output: false
+Explanation: The string contains correctly paired but incorrectly ordered parentheses.
+```
+
+```
+Input: str = "([]){}"
+Output: true
+Explanation: The string contains correctly paired and ordered parentheses.
+```
+
+---
+
+## Constraints
+
+- 1 &lt;= `str.length` &lt;= 1,024
+- The string str contains only the characters `(`, `)`, `{`, `}`, `[`, and `]`
+
+---
+
+## Solution
+
+### TypeScript
+
+<details>
+<summary>Click to expand</summary>
+```Typescript
+export default function isBalancedBrackets(str: string): boolean{
+
+    if(str.length % 2 != 0) return false;
+
+    const mapping: Record<string, string> = {
+        '(': ')',
+        '{': '}',
+        '[': ']'
+    }
+
+    const bracketStack: string[] = [];
+
+    for(let c of str){
+        if(mapping[c]){
+            bracketStack.push(mapping[c]);
+        }else{
+            const expectedBracket = bracketStack.length ? bracketStack.pop() : '#';
+            if(c !== expectedBracket) return false;
+        }
+    }
+
+    return bracketStack.length === 0;
+
+}
+
+````
+
+</details>
+
+
+### Java
+
+<details>
+<summary>Click to expand</summary>
+
+```Java
+import java.util.*;
+
+public class Solution {
+    public boolean isValid(String s){
+        if(s.length() % 2 != 0)
+            return false;
+
+        Deque<Character> stack = new ArrayDeque<>(s.length());
+        for(int i = 0; i < s.length(); i++){
+            char c = s.charAt(i);
+            switch(c){
+                case '(' -> stack.push(')');
+                case '[' -> stack.push(']');
+                case '{' -> stack.push('}');
+                default -> {
+                    if(stack.isEmpty() || stack.poll() != c){
+                        return false;
+                    }
+                }
+            }
+        }
+        return stack.isEmpty();
+    }
+}
+````
+
+</details>
+
+---
