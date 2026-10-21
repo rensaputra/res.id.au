@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write
   pull-requests: read
+  id-token: write # Required for AWS OIDC authentication
 
 concurrency:
   group: deploy-gh-pages
@@ -95,6 +96,33 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
           force_orphan: true
+
+      - name: Configure AWS credentials
+        if: ${{ vars.S3_BUCKET != '' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Deploy to S3
+        if: ${{ vars.S3_BUCKET != '' }}
+        env:
+          S3_BUCKET: ${{ vars.S3_BUCKET }}
+        run: |
+          # PR previews and CNAME are GitHub Pages specific, so keep them out of S3.
+          EXCLUDES=(--exclude "pr-*" --exclude "pr-*/*" --exclude "CNAME")
+
+          # Hashed static assets: safe to cache for a long time.
+          aws s3 sync ./build/assets "s3://${S3_BUCKET}/assets" \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable"
+
+          # Everything else (HTML, sitemap, etc.): always revalidate.
+          aws s3 sync ./build "s3://${S3_BUCKET}" \
+            --delete \
+            --exclude "assets/*" \
+            "${EXCLUDES[@]}" \
+            --cache-control "public, max-age=0, must-revalidate"
 
       - name: Submit URLs to IndexNow
         if: ${{ env.INDEXNOW_KEY != '' }}
