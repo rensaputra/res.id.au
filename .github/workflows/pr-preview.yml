@@ -60,7 +60,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const url = `https://res.id.au/pr-${context.payload.pull_request.number}/`;
+            const url = `https://dev.res.id.au/pr-${context.payload.pull_request.number}/`;
 
             // Find an existing preview comment
             const { data: comments } = await github.rest.issues.listComments({

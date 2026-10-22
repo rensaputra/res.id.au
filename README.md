@@ -76,24 +76,31 @@ GIT_USER=<Your GitHub username> npm run deploy
 
 If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
 
-### Amazon S3 Deployment
+### Amazon S3 + CloudFront Deployment
 
-In addition to GitHub Pages, the deployment workflow (`.github/workflows/deploy.yml`) syncs the built site to an S3 bucket configured for static website hosting. It authenticates with AWS using GitHub's OIDC provider, so no long-lived AWS access keys are stored in the repository.
+The production site at **`res.id.au`** is hosted on Amazon S3 and served through a CloudFront distribution. The deployment workflow (`.github/workflows/deploy.yml`) syncs the built site to the S3 bucket and invalidates the CloudFront cache. It authenticates with AWS using GitHub's OIDC provider, so no long-lived AWS access keys are stored in the repository.
+
+GitHub Pages is still deployed in parallel and serves a secondary copy at **`dev.res.id.au`** (the domain is set by `static/CNAME`).
+
+| Hostname        | Hosted on       | Purpose                                   |
+| --------------- | --------------- | ----------------------------------------- |
+| `res.id.au`     | S3 + CloudFront | Canonical production site                 |
+| `dev.res.id.au` | GitHub Pages    | Secondary copy and `pr-*` preview staging |
 
 The workflow is split into three jobs:
 
-| Job            | Description                                                                                                                                         |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `build`        | Builds the site, adds the IndexNow key file, and uploads `build/` as a short-lived artifact.                                                        |
-| `deploy-pages` | Deploys to the `gh-pages` branch (preserving open PR previews and `CNAME`), then submits to IndexNow and Wayback.                                   |
-| `deploy-s3`    | Runs in the `s3` [GitHub environment](https://docs.github.com/en/actions/deployment/targeting-different-environments) and syncs the artifact to S3. |
+| Job            | Description                                                                                                                                                                   |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `build`        | Builds the site, adds the IndexNow key file, and uploads `build/` as a short-lived artifact.                                                                                  |
+| `deploy-pages` | Deploys to the `gh-pages` branch (preserving open PR previews), then submits to IndexNow and Wayback.                                                                         |
+| `deploy-s3`    | Runs in the `s3` [GitHub environment](https://docs.github.com/en/actions/deployment/targeting-different-environments), syncs the artifact to S3, then invalidates CloudFront. |
 
 Both deploy jobs run in parallel after `build`, so a failure in one does not block the other. The S3 sync runs in two passes:
 
 - `build/assets/` (hashed filenames) is uploaded with `Cache-Control: public, max-age=31536000, immutable`.
 - Everything else (HTML, sitemap, etc.) is uploaded with `Cache-Control: public, max-age=0, must-revalidate`.
 
-PR previews (`pr-*`) and `CNAME` are only added in the `deploy-pages` job, so they never reach S3.
+The `CNAME` file (used only by GitHub Pages for `dev.res.id.au`) is sourced from `static/CNAME` at build time, so it is present in both deployments. It is harmless on S3 since CloudFront serves `res.id.au` regardless.
 
 #### 1. GitHub OIDC Provider in IAM
 
@@ -167,10 +174,18 @@ aws iam update-assume-role-policy \
       "Effect": "Allow",
       "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
       "Resource": "arn:aws:s3:::res.id.au/*"
+    },
+    {
+      "Sid": "InvalidateCloudFront",
+      "Effect": "Allow",
+      "Action": ["cloudfront:CreateInvalidation", "cloudfront:GetInvalidation"],
+      "Resource": "arn:aws:cloudfront::<ACCOUNT_ID>:distribution/<DISTRIBUTION_ID>"
     }
   ]
 }
 ```
+
+> **Note:** The `cloudfront:*` permissions are only needed if the site is served through CloudFront (see the [CloudFront](#cloudfront) section). `cloudfront:GetInvalidation` is required because the workflow waits for the invalidation to complete.
 
 Or with the AWS CLI, after saving the policies above as `trust-policy.json` and `s3-deploy-policy.json`:
 
@@ -194,12 +209,13 @@ aws iam put-role-policy \
 3. Optionally enable **Required reviewers** or a **Wait timer** to gate each S3 deployment.
 4. Under **Environment variables**, add the following:
 
-| Variable         | Example                                                    | Description                                              |
-| ---------------- | ---------------------------------------------------------- | -------------------------------------------------------- |
-| `S3_BUCKET`      | `res.id.au`                                                | Target S3 bucket name                                    |
-| `AWS_REGION`     | `ap-southeast-2`                                           | Region of the S3 bucket                                  |
-| `AWS_ROLE_ARN`   | `arn:aws:iam::<ACCOUNT_ID>:role/GithubActionDeployS3`      | ARN of the IAM role created above                        |
-| `S3_WEBSITE_URL` | `http://res.id.au.s3-website-ap-southeast-2.amazonaws.com` | Optional. Shown as the deployment link in the repository |
+| Variable                     | Example                                               | Description                                                             |
+| ---------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------- |
+| `S3_BUCKET`                  | `res.id.au`                                           | Target S3 bucket name                                                   |
+| `AWS_REGION`                 | `ap-southeast-2`                                      | Region of the S3 bucket                                                 |
+| `AWS_ROLE_ARN`               | `arn:aws:iam::<ACCOUNT_ID>:role/GithubActionDeployS3` | ARN of the IAM role created above                                       |
+| `CLOUDFRONT_DISTRIBUTION_ID` | `E1A2B3C4D5E6F7`                                      | CloudFront distribution ID. If unset, the invalidation step is skipped. |
+| `S3_WEBSITE_URL`             | `https://res.id.au`                                   | Optional. Shown as the deployment link in the repository                |
 
 > **Note:** If these variables were previously defined as repository variables, delete them from **Settings** > **Secrets and variables** > **Actions** > **Variables** so the environment is the single source of truth. Environment variables take precedence over repository variables with the same name.
 
@@ -214,6 +230,60 @@ Or with the GitHub CLI:
 ```bash
 gh workflow run deploy.yml -f s3_only=true
 ```
+
+### CloudFront
+
+The S3 bucket is private and served through CloudFront using an [Origin Access Control (OAC)](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html). The bucket policy grants `s3:GetObject` only to the CloudFront service principal (`cloudfront.amazonaws.com`), scoped to the distribution ARN via `AWS:SourceArn`; public access is blocked.
+
+#### Subfolder index rewriting
+
+With an OAC (REST API) origin, S3 does not automatically serve `index.html` for directory-style paths, so clean URLs like `/docs/intro/` would return `403`. A **CloudFront Function** on the **viewer request** event rewrites these paths:
+
+```javascript
+function handler(event) {
+  var request = event.request;
+  var uri = request.uri;
+
+  // Directory-style path (ends in /): append index.html
+  if (uri.endsWith('/')) {
+    request.uri += 'index.html';
+  }
+  // Extensionless path (no file extension in the last segment): treat as a
+  // directory, e.g. /docs/intro -> /docs/intro/index.html
+  else if (!uri.includes('.', uri.lastIndexOf('/'))) {
+    request.uri += '/index.html';
+  }
+
+  return request;
+}
+```
+
+Create it under **CloudFront** > **Functions**, publish it, then associate it with the default behavior's **Viewer request** event. Keep the distribution's **Default root object** set to `index.html`.
+
+#### Custom error page
+
+Because the bucket policy does not grant `s3:ListBucket`, S3 returns `403 AccessDenied` (not `404`) for missing objects. A **custom error response** on the distribution maps this to the Docusaurus 404 page:
+
+- **HTTP error code:** `403: Forbidden`
+- **Response page path:** `/404.html`
+- **HTTP Response code:** `404: Not Found`
+- **Error caching minimum TTL:** `10` seconds (keep short so new pages are not masked by a cached 404)
+
+#### Cache invalidation
+
+After each S3 sync, the `deploy-s3` job runs `aws cloudfront create-invalidation --paths "/*"` and waits for it to complete, so new HTML is served immediately instead of waiting for edge TTLs to expire. Hashed assets under `assets/` are immutable and would not strictly need invalidating, but a single `/*` invalidation counts as one path against the monthly free tier (1,000 paths) and keeps the step simple.
+
+The step is skipped when `CLOUDFRONT_DISTRIBUTION_ID` is not set, and it requires the `cloudfront:CreateInvalidation` and `cloudfront:GetInvalidation` permissions added to the IAM role above.
+
+#### Custom domain (`res.id.au`)
+
+DNS for `res.id.au` is managed by Cloudflare.
+
+1. Request a public certificate in **AWS Certificate Manager in `us-east-1`** (CloudFront only reads certificates from that region) for `res.id.au`. Validate it with the DNS CNAME ACM provides, added in Cloudflare as **DNS only** (grey cloud).
+2. On the distribution, add `res.id.au` as an **Alternate domain name (CNAME)** and attach the issued certificate.
+3. In Cloudflare, add a `CNAME` for `res.id.au` targeting the distribution's `*.cloudfront.net` domain, set to **DNS only** (grey cloud). Cloudflare's CNAME flattening serves this at the apex.
+
+> **Note:** `dev.res.id.au` (GitHub Pages) is configured separately: a Cloudflare `CNAME` to `rensaputra.github.io` and the custom domain set under **Settings** > **Pages**.
 
 ### Wayback Machine Integration
 

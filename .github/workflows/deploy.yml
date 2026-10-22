@@ -107,7 +107,9 @@ jobs:
           path: gh-pages-branch
           fetch-depth: 1
 
-      - name: Preserve PR previews and CNAME
+      # The custom domain (CNAME) is sourced from static/CNAME at build time, so it is
+      # always present in build/ and does not need to be preserved from the branch here.
+      - name: Preserve PR previews
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -127,15 +129,9 @@ jobs:
             else
               echo "No PR previews found."
             fi
-            if [ -f "gh-pages-branch/CNAME" ]; then
-              echo "Found CNAME, copying to build directory..."
-              cp gh-pages-branch/CNAME ./build/
-            else
-              echo "No CNAME found."
-            fi
             rm -rf gh-pages-branch
           else
-            echo "gh-pages branch not found, skipping PR preview and CNAME preservation."
+            echo "gh-pages branch not found, skipping PR preview preservation."
           fi
 
       - name: Deploy to GitHub Pages
@@ -215,3 +211,23 @@ jobs:
 
           # Shown as the deployment link in GitHub (optional).
           echo "url=${S3_WEBSITE_URL}" >> "$GITHUB_OUTPUT"
+
+      # Hashed assets are immutable, but HTML and other files reuse their paths,
+      # so CloudFront must drop its cached copies to serve the new deploy.
+      - name: Invalidate CloudFront cache
+        if: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID != '' }}
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+        run: |
+          INVALIDATION_ID=$(aws cloudfront create-invalidation \
+            --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" \
+            --paths "/*" \
+            --query 'Invalidation.Id' --output text)
+          echo "Created invalidation $INVALIDATION_ID, waiting for it to complete..."
+
+          # Block until the edge caches are cleared so the deployment isn't
+          # marked successful while stale content is still being served.
+          aws cloudfront wait invalidation-completed \
+            --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" \
+            --id "$INVALIDATION_ID"
+          echo "Invalidation $INVALIDATION_ID completed."
