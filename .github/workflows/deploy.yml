@@ -1,8 +1,10 @@
 name: Deploy
 
+# Manual runs show the deploy mode; pushes keep the commit message as the title.
 run-name: >-
-  Deploy ${{ github.event_name == 'workflow_dispatch' && inputs.s3_only && '(S3 only)' || '(all targets)' }}
-  by @${{ github.actor }}
+  ${{ github.event_name == 'workflow_dispatch'
+    && format('Manual deploy ({0}) by @{1}', inputs.s3_only && 'S3 only' || 'all targets', github.actor)
+    || github.event.head_commit.message }}
 
 on:
   push:
