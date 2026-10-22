@@ -76,6 +76,120 @@ GIT_USER=<Your GitHub username> npm run deploy
 
 If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
 
+### Amazon S3 Deployment
+
+In addition to GitHub Pages, the deployment workflow (`.github/workflows/deploy.yml`) syncs the built site to an S3 bucket configured for static website hosting. It authenticates with AWS using GitHub's OIDC provider, so no long-lived AWS access keys are stored in the repository.
+
+The sync runs in two passes:
+
+- `build/assets/` (hashed filenames) is uploaded with `Cache-Control: public, max-age=31536000, immutable`.
+- Everything else (HTML, sitemap, etc.) is uploaded with `Cache-Control: public, max-age=0, must-revalidate`.
+
+PR previews (`pr-*`) and `CNAME` are GitHub Pages specific and are excluded from S3. If the `S3_BUCKET` variable is not set, the S3 steps are skipped.
+
+#### 1. GitHub OIDC Provider in IAM
+
+This only needs to be done once per AWS account.
+
+1. Open the **IAM console** > **Identity providers** > **Add provider**.
+2. Choose **OpenID Connect**.
+3. Set **Provider URL** to `https://token.actions.githubusercontent.com`.
+4. Set **Audience** to `sts.amazonaws.com`.
+5. Click **Add provider**.
+
+Or with the AWS CLI:
+
+```bash
+aws iam create-open-id-connect-provider \
+  --url https://token.actions.githubusercontent.com \
+  --client-id-list sts.amazonaws.com
+```
+
+#### 2. IAM Role
+
+Create a role (e.g. `GithubActionDeployS3`) that GitHub Actions can assume.
+
+**Trust policy:** allows only workflows running on the `main` branch of this repository to assume the role. Replace `<ACCOUNT_ID>` with your AWS account ID:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::<ACCOUNT_ID>:oidc-provider/token.actions.githubusercontent.com"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+          "token.actions.githubusercontent.com:sub": "repo:rensaputra/res.id.au:ref:refs/heads/main"
+        }
+      }
+    }
+  ]
+}
+```
+
+**Permissions policy:** grants the minimum access needed by `aws s3 sync --delete`. Note that `s3:ListBucket` applies to the bucket ARN, while object actions apply to `bucket/*`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ListBucket",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::res.id.au"
+    },
+    {
+      "Sid": "ReadWriteObjects",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+      "Resource": "arn:aws:s3:::res.id.au/*"
+    }
+  ]
+}
+```
+
+Or with the AWS CLI, after saving the policies above as `trust-policy.json` and `s3-deploy-policy.json`:
+
+```bash
+aws iam create-role \
+  --role-name GithubActionDeployS3 \
+  --assume-role-policy-document file://trust-policy.json
+
+aws iam put-role-policy \
+  --role-name GithubActionDeployS3 \
+  --policy-name S3DeployResIdAu \
+  --policy-document file://s3-deploy-policy.json
+```
+
+> **Note:** If the bucket uses SSE-KMS with a customer-managed key, also grant `kms:GenerateDataKey` and `kms:Decrypt` on that key.
+
+#### 3. Repository Variables
+
+1. Go to your GitHub repository **Settings** > **Secrets and variables** > **Actions**.
+2. Open the **Variables** tab and create the following repository variables:
+
+| Variable       | Example                                               | Description                       |
+| -------------- | ----------------------------------------------------- | --------------------------------- |
+| `S3_BUCKET`    | `res.id.au`                                           | Target S3 bucket name             |
+| `AWS_REGION`   | `ap-southeast-2`                                      | Region of the S3 bucket           |
+| `AWS_ROLE_ARN` | `arn:aws:iam::<ACCOUNT_ID>:role/GithubActionDeployS3` | ARN of the IAM role created above |
+
+#### Running the S3 Deployment On Demand
+
+The workflow runs automatically on every push to `main`. It can also be triggered manually from **Actions** > **Deploy to GitHub Pages** > **Run workflow** (on the `main` branch). Leave **Only deploy to S3** ticked to skip GitHub Pages, IndexNow and Wayback Machine, or untick it for a full deployment.
+
+Or with the GitHub CLI:
+
+```bash
+gh workflow run deploy.yml -f s3_only=true
+```
+
 ### Wayback Machine Integration
 
 The deployment pipeline automatically submits the website to the [Internet Archive's Wayback Machine](https://web.archive.org/) after a successful deployment to ensure older versions of the notes are preserved.
