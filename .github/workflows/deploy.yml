@@ -1,21 +1,9 @@
 name: Deploy
 
-# Manual runs show the deploy mode; pushes keep the commit message as the title.
-run-name: >-
-  ${{ github.event_name == 'workflow_dispatch'
-    && format('Manual deploy ({0}) by @{1}', inputs.s3_only && 'S3 only' || 'all targets', github.actor)
-    || github.event.head_commit.message }}
-
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
-    inputs:
-      s3_only:
-        description: 'Only deploy to S3 (skip GitHub Pages, IndexNow and Wayback Machine)'
-        type: boolean
-        default: true
 
 # Least privilege by default; each job requests what it needs.
 permissions:
@@ -24,7 +12,7 @@ permissions:
 jobs:
   build:
     name: Build site
-    # Manual runs are only allowed from main so a feature branch can't overwrite production.
+    # Only build from main so a feature branch can't overwrite production.
     # Deploy jobs depend on this one, so they are skipped too.
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
@@ -71,8 +59,6 @@ jobs:
   deploy-pages:
     name: Deploy to Dev
     needs: build
-    # Skipped for manual runs with "s3_only" ticked.
-    if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.s3_only) }}
     runs-on: ubuntu-latest
     # Shared with pr-preview.yml: both push to the gh-pages branch, so they must
     # not run concurrently. Scoped to this job only so S3 deploys are never
@@ -145,7 +131,8 @@ jobs:
 
   deploy-s3:
     name: Deploy to Prod
-    needs: build
+    # Runs after both build and the Pages deploy succeed.
+    needs: [build, deploy-pages]
     runs-on: ubuntu-latest
     # S3_BUCKET, AWS_REGION, AWS_ROLE_ARN, CLOUDFRONT_DISTRIBUTION_ID and S3_WEBSITE_URL
     # are environment variables of "prod".

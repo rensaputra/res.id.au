@@ -221,15 +221,9 @@ aws iam put-role-policy \
 
 Each successful run is recorded under **Deployments** > **prod** on the repository home page.
 
-#### Running the S3 Deployment On Demand
+#### Running the Deployment
 
-The workflow runs automatically on every push to `main`. It can also be triggered manually from **Actions** > **Deploy** > **Run workflow** (on the `main` branch). Leave **Only deploy to S3** ticked to skip the `deploy-pages` job (the `dev.res.id.au` GitHub Pages deploy), or untick it for a full deployment. The `deploy-s3` job — including the CloudFront invalidation, IndexNow and Wayback submissions — always runs. Runs from other branches are skipped.
-
-Or with the GitHub CLI:
-
-```bash
-gh workflow run deploy.yml -f s3_only=true
-```
+The workflow runs automatically on every push to `main`. It builds the site, deploys to GitHub Pages (`dev.res.id.au`), then deploys to S3 (`prod`) — including the CloudFront invalidation, IndexNow and Wayback submissions. Runs from other branches are skipped.
 
 ### CloudFront
 
