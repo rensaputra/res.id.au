@@ -11,26 +11,22 @@ on:
         type: boolean
         default: true
 
+# Least privilege by default; each job requests what it needs.
 permissions:
-  contents: write
-  pull-requests: read
-  id-token: write # Required for AWS OIDC authentication
+  contents: read
 
 concurrency:
   group: deploy-gh-pages
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     # Manual runs are only allowed from main so a feature branch can't overwrite production.
+    # Deploy jobs depend on this one, so they are skipped too.
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     env:
-      # true only for manual runs with "s3_only" ticked; empty on push events.
-      S3_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.s3_only }}
       INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
-      IA_ACCESS_KEY: ${{ secrets.IA_ACCESS_KEY }}
-      IA_SECRET_KEY: ${{ secrets.IA_SECRET_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -61,8 +57,40 @@ jobs:
           echo "$INDEXNOW_KEY" > "./build/$INDEXNOW_KEY.txt"
           echo "Generated IndexNow verification file."
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: build
+          include-hidden-files: true
+          retention-days: 1
+
+  deploy-pages:
+    needs: build
+    # Skipped for manual runs with "s3_only" ticked.
+    if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.s3_only) }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Push to gh-pages
+      pull-requests: read # List open PRs to keep their previews
+    env:
+      INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+      IA_ACCESS_KEY: ${{ secrets.IA_ACCESS_KEY }}
+      IA_SECRET_KEY: ${{ secrets.IA_SECRET_KEY }}
+    steps:
+      # Gives `gh` and the gh-pages action a repository context.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: build
+
       - name: Checkout gh-pages branch
-        if: ${{ env.S3_ONLY != 'true' }}
         uses: actions/checkout@v4
         continue-on-error: true
         with:
@@ -71,7 +99,6 @@ jobs:
           fetch-depth: 1
 
       - name: Preserve PR previews and CNAME
-        if: ${{ env.S3_ONLY != 'true' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -103,42 +130,14 @@ jobs:
           fi
 
       - name: Deploy to GitHub Pages
-        if: ${{ env.S3_ONLY != 'true' }}
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
           force_orphan: true
 
-      - name: Configure AWS credentials
-        if: ${{ vars.S3_BUCKET != '' }}
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
-
-      - name: Deploy to S3
-        if: ${{ vars.S3_BUCKET != '' }}
-        env:
-          S3_BUCKET: ${{ vars.S3_BUCKET }}
-        run: |
-          # PR previews and CNAME are GitHub Pages specific, so keep them out of S3.
-          EXCLUDES=(--exclude "pr-*" --exclude "pr-*/*" --exclude "CNAME")
-
-          # Hashed static assets: safe to cache for a long time.
-          aws s3 sync ./build/assets "s3://${S3_BUCKET}/assets" \
-            --delete \
-            --cache-control "public, max-age=31536000, immutable"
-
-          # Everything else (HTML, sitemap, etc.): always revalidate.
-          aws s3 sync ./build "s3://${S3_BUCKET}" \
-            --delete \
-            --exclude "assets/*" \
-            "${EXCLUDES[@]}" \
-            --cache-control "public, max-age=0, must-revalidate"
-
       - name: Submit URLs to IndexNow
-        if: ${{ env.INDEXNOW_KEY != '' && env.S3_ONLY != 'true' }}
+        if: ${{ env.INDEXNOW_KEY != '' }}
         uses: bojieyang/indexnow-action@v2
         with:
           sitemap-location: 'https://res.id.au/sitemap.xml'
@@ -146,7 +145,6 @@ jobs:
           lastmod-required: false
 
       - name: Archive to Wayback Machine
-        if: ${{ env.S3_ONLY != 'true' }}
         continue-on-error: true
         run: |
           AUTH_HEADER=""
@@ -163,3 +161,47 @@ jobs:
             -d "capture_screenshot=1" \
             -d "skip_first_archive=1" \
             -d "if_not_archived_within=1d" || true
+
+  deploy-s3:
+    needs: build
+    runs-on: ubuntu-latest
+    # S3_BUCKET, AWS_REGION, AWS_ROLE_ARN and S3_WEBSITE_URL are environment variables of "s3".
+    # Using an environment changes the OIDC subject to repo:<owner>/<repo>:environment:s3.
+    environment:
+      name: s3
+      url: ${{ steps.deploy.outputs.url }}
+    permissions:
+      contents: read
+      id-token: write # Required for AWS OIDC authentication
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Deploy to S3
+        id: deploy
+        env:
+          S3_BUCKET: ${{ vars.S3_BUCKET }}
+          S3_WEBSITE_URL: ${{ vars.S3_WEBSITE_URL }}
+        run: |
+          # Hashed static assets: safe to cache for a long time.
+          aws s3 sync ./build/assets "s3://${S3_BUCKET}/assets" \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable"
+
+          # Everything else (HTML, sitemap, etc.): always revalidate.
+          aws s3 sync ./build "s3://${S3_BUCKET}" \
+            --delete \
+            --exclude "assets/*" \
+            --cache-control "public, max-age=0, must-revalidate"
+
+          # Shown as the deployment link in GitHub (optional).
+          echo "url=${S3_WEBSITE_URL}" >> "$GITHUB_OUTPUT"

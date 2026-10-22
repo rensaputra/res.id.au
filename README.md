@@ -80,12 +80,20 @@ If you are using GitHub pages for hosting, this command is a convenient way to b
 
 In addition to GitHub Pages, the deployment workflow (`.github/workflows/deploy.yml`) syncs the built site to an S3 bucket configured for static website hosting. It authenticates with AWS using GitHub's OIDC provider, so no long-lived AWS access keys are stored in the repository.
 
-The sync runs in two passes:
+The workflow is split into three jobs:
+
+| Job            | Description                                                                                                                                         |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `build`        | Builds the site, adds the IndexNow key file, and uploads `build/` as a short-lived artifact.                                                        |
+| `deploy-pages` | Deploys to the `gh-pages` branch (preserving open PR previews and `CNAME`), then submits to IndexNow and Wayback.                                   |
+| `deploy-s3`    | Runs in the `s3` [GitHub environment](https://docs.github.com/en/actions/deployment/targeting-different-environments) and syncs the artifact to S3. |
+
+Both deploy jobs run in parallel after `build`, so a failure in one does not block the other. The S3 sync runs in two passes:
 
 - `build/assets/` (hashed filenames) is uploaded with `Cache-Control: public, max-age=31536000, immutable`.
 - Everything else (HTML, sitemap, etc.) is uploaded with `Cache-Control: public, max-age=0, must-revalidate`.
 
-PR previews (`pr-*`) and `CNAME` are GitHub Pages specific and are excluded from S3. If the `S3_BUCKET` variable is not set, the S3 steps are skipped.
+PR previews (`pr-*`) and `CNAME` are only added in the `deploy-pages` job, so they never reach S3.
 
 #### 1. GitHub OIDC Provider in IAM
 
@@ -109,7 +117,7 @@ aws iam create-open-id-connect-provider \
 
 Create a role (e.g. `GithubActionDeployS3`) that GitHub Actions can assume.
 
-**Trust policy:** allows only workflows running on the `main` branch of this repository to assume the role. Replace `<ACCOUNT_ID>` with your AWS account ID:
+**Trust policy:** allows only jobs running in the `s3` environment of this repository to assume the role. Replace `<ACCOUNT_ID>` with your AWS account ID:
 
 ```json
 {
@@ -124,12 +132,22 @@ Create a role (e.g. `GithubActionDeployS3`) that GitHub Actions can assume.
       "Condition": {
         "StringEquals": {
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-          "token.actions.githubusercontent.com:sub": "repo:rensaputra/res.id.au:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub": "repo:rensaputra/res.id.au:environment:s3"
         }
       }
     }
   ]
 }
+```
+
+> **Note:** When a job uses a GitHub environment, the OIDC `sub` claim is `repo:<owner>/<repo>:environment:<name>` instead of `repo:<owner>/<repo>:ref:refs/heads/main`. The branch restriction is enforced by the environment's deployment branch rule (see step 3) rather than by IAM. If the `sub` doesn't match, the job fails with `Not authorized to perform sts:AssumeRoleWithWebIdentity`.
+
+To update the trust policy of an existing role:
+
+```bash
+aws iam update-assume-role-policy \
+  --role-name GithubActionDeployS3 \
+  --policy-document file://trust-policy.json
 ```
 
 **Permissions policy:** grants the minimum access needed by `aws s3 sync --delete`. Note that `s3:ListBucket` applies to the bucket ARN, while object actions apply to `bucket/*`:
@@ -169,20 +187,27 @@ aws iam put-role-policy \
 
 > **Note:** If the bucket uses SSE-KMS with a customer-managed key, also grant `kms:GenerateDataKey` and `kms:Decrypt` on that key.
 
-#### 3. Repository Variables
+#### 3. GitHub Environment and Variables
 
-1. Go to your GitHub repository **Settings** > **Secrets and variables** > **Actions**.
-2. Open the **Variables** tab and create the following repository variables:
+1. Go to your GitHub repository **Settings** > **Environments** > **New environment** and name it `s3`.
+2. Under **Deployment branches and tags**, choose **Selected branches and tags** and add `main`. This prevents other branches from deploying to S3.
+3. Optionally enable **Required reviewers** or a **Wait timer** to gate each S3 deployment.
+4. Under **Environment variables**, add the following:
 
-| Variable       | Example                                               | Description                       |
-| -------------- | ----------------------------------------------------- | --------------------------------- |
-| `S3_BUCKET`    | `res.id.au`                                           | Target S3 bucket name             |
-| `AWS_REGION`   | `ap-southeast-2`                                      | Region of the S3 bucket           |
-| `AWS_ROLE_ARN` | `arn:aws:iam::<ACCOUNT_ID>:role/GithubActionDeployS3` | ARN of the IAM role created above |
+| Variable         | Example                                                    | Description                                              |
+| ---------------- | ---------------------------------------------------------- | -------------------------------------------------------- |
+| `S3_BUCKET`      | `res.id.au`                                                | Target S3 bucket name                                    |
+| `AWS_REGION`     | `ap-southeast-2`                                           | Region of the S3 bucket                                  |
+| `AWS_ROLE_ARN`   | `arn:aws:iam::<ACCOUNT_ID>:role/GithubActionDeployS3`      | ARN of the IAM role created above                        |
+| `S3_WEBSITE_URL` | `http://res.id.au.s3-website-ap-southeast-2.amazonaws.com` | Optional. Shown as the deployment link in the repository |
+
+> **Note:** If these variables were previously defined as repository variables, delete them from **Settings** > **Secrets and variables** > **Actions** > **Variables** so the environment is the single source of truth. Environment variables take precedence over repository variables with the same name.
+
+Each successful run is recorded under **Deployments** > **s3** on the repository home page.
 
 #### Running the S3 Deployment On Demand
 
-The workflow runs automatically on every push to `main`. It can also be triggered manually from **Actions** > **Deploy to GitHub Pages** > **Run workflow** (on the `main` branch). Leave **Only deploy to S3** ticked to skip GitHub Pages, IndexNow and Wayback Machine, or untick it for a full deployment.
+The workflow runs automatically on every push to `main`. It can also be triggered manually from **Actions** > **Deploy to GitHub Pages** > **Run workflow** (on the `main` branch). Leave **Only deploy to S3** ticked to skip the `deploy-pages` job (GitHub Pages, IndexNow and Wayback Machine), or untick it for a full deployment. Runs from other branches are skipped.
 
 Or with the GitHub CLI:
 
