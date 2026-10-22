@@ -107,7 +107,9 @@ jobs:
           path: gh-pages-branch
           fetch-depth: 1
 
-      - name: Preserve PR previews and CNAME
+      # The custom domain (CNAME) is sourced from static/CNAME at build time, so it is
+      # always present in build/ and does not need to be preserved from the branch here.
+      - name: Preserve PR previews
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -127,15 +129,9 @@ jobs:
             else
               echo "No PR previews found."
             fi
-            if [ -f "gh-pages-branch/CNAME" ]; then
-              echo "Found CNAME, copying to build directory..."
-              cp gh-pages-branch/CNAME ./build/
-            else
-              echo "No CNAME found."
-            fi
             rm -rf gh-pages-branch
           else
-            echo "gh-pages branch not found, skipping PR preview and CNAME preservation."
+            echo "gh-pages branch not found, skipping PR preview preservation."
           fi
 
       - name: Deploy to GitHub Pages
