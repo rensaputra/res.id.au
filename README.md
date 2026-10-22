@@ -89,11 +89,11 @@ GitHub Pages is still deployed in parallel and serves a secondary copy at **`dev
 
 The workflow is split into three jobs:
 
-| Job            | Description                                                                                                                                                                   |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `build`        | Builds the site, adds the IndexNow key file, and uploads `build/` as a short-lived artifact.                                                                                  |
-| `deploy-pages` | Deploys to the `gh-pages` branch (preserving open PR previews), then submits to IndexNow and Wayback.                                                                         |
-| `deploy-s3`    | Runs in the `s3` [GitHub environment](https://docs.github.com/en/actions/deployment/targeting-different-environments), syncs the artifact to S3, then invalidates CloudFront. |
+| Job            | Description                                                                                                                                                                     |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `build`        | Builds the site, adds the IndexNow key file, and uploads `build/` as a short-lived artifact.                                                                                    |
+| `deploy-pages` | Deploys to the `gh-pages` branch (preserving open PR previews), then submits to IndexNow and Wayback.                                                                           |
+| `deploy-s3`    | Runs in the `prod` [GitHub environment](https://docs.github.com/en/actions/deployment/targeting-different-environments), syncs the artifact to S3, then invalidates CloudFront. |
 
 Both deploy jobs run in parallel after `build`, so a failure in one does not block the other. The S3 sync runs in two passes:
 
@@ -124,7 +124,7 @@ aws iam create-open-id-connect-provider \
 
 Create a role (e.g. `GithubActionDeployS3`) that GitHub Actions can assume.
 
-**Trust policy:** allows only jobs running in the `s3` environment of this repository to assume the role. Replace `<ACCOUNT_ID>` with your AWS account ID:
+**Trust policy:** allows only jobs running in the `prod` environment of this repository to assume the role. Replace `<ACCOUNT_ID>` with your AWS account ID:
 
 ```json
 {
@@ -139,7 +139,7 @@ Create a role (e.g. `GithubActionDeployS3`) that GitHub Actions can assume.
       "Condition": {
         "StringEquals": {
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-          "token.actions.githubusercontent.com:sub": "repo:rensaputra/res.id.au:environment:s3"
+          "token.actions.githubusercontent.com:sub": "repo:rensaputra/res.id.au:environment:prod"
         }
       }
     }
@@ -204,7 +204,7 @@ aws iam put-role-policy \
 
 #### 3. GitHub Environment and Variables
 
-1. Go to your GitHub repository **Settings** > **Environments** > **New environment** and name it `s3`.
+1. Go to your GitHub repository **Settings** > **Environments** > **New environment** and name it `prod`.
 2. Under **Deployment branches and tags**, choose **Selected branches and tags** and add `main`. This prevents other branches from deploying to S3.
 3. Optionally enable **Required reviewers** or a **Wait timer** to gate each S3 deployment.
 4. Under **Environment variables**, add the following:
@@ -219,7 +219,7 @@ aws iam put-role-policy \
 
 > **Note:** If these variables were previously defined as repository variables, delete them from **Settings** > **Secrets and variables** > **Actions** > **Variables** so the environment is the single source of truth. Environment variables take precedence over repository variables with the same name.
 
-Each successful run is recorded under **Deployments** > **s3** on the repository home page.
+Each successful run is recorded under **Deployments** > **prod** on the repository home page.
 
 #### Running the S3 Deployment On Demand
 

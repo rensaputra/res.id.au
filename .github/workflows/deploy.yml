@@ -177,10 +177,11 @@ jobs:
     name: Deploy to S3
     needs: build
     runs-on: ubuntu-latest
-    # S3_BUCKET, AWS_REGION, AWS_ROLE_ARN and S3_WEBSITE_URL are environment variables of "s3".
-    # Using an environment changes the OIDC subject to repo:<owner>/<repo>:environment:s3.
+    # S3_BUCKET, AWS_REGION, AWS_ROLE_ARN, CLOUDFRONT_DISTRIBUTION_ID and S3_WEBSITE_URL
+    # are environment variables of "prod".
+    # Using an environment changes the OIDC subject to repo:<owner>/<repo>:environment:prod.
     environment:
-      name: s3
+      name: prod
       url: ${{ steps.deploy.outputs.url }}
     permissions:
       contents: read
