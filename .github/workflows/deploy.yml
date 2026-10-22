@@ -69,7 +69,7 @@ jobs:
           retention-days: 1
 
   deploy-pages:
-    name: Deploy to GitHub Pages
+    name: Deploy to Dev
     needs: build
     # Skipped for manual runs with "s3_only" ticked.
     if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.s3_only) }}
@@ -88,10 +88,6 @@ jobs:
     permissions:
       contents: write # Push to gh-pages
       pull-requests: read # List open PRs to keep their previews
-    env:
-      INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
-      IA_ACCESS_KEY: ${{ secrets.IA_ACCESS_KEY }}
-      IA_SECRET_KEY: ${{ secrets.IA_SECRET_KEY }}
     steps:
       # Gives `gh` and the gh-pages action a repository context.
       - name: Checkout repository
@@ -147,34 +143,8 @@ jobs:
           publish_dir: ./build
           force_orphan: true
 
-      - name: Submit URLs to IndexNow
-        if: ${{ env.INDEXNOW_KEY != '' }}
-        uses: bojieyang/indexnow-action@v2
-        with:
-          sitemap-location: 'https://res.id.au/sitemap.xml'
-          key: ${{ secrets.INDEXNOW_KEY }}
-          lastmod-required: false
-
-      - name: Archive to Wayback Machine
-        continue-on-error: true
-        run: |
-          AUTH_HEADER=""
-          if [ -n "$IA_ACCESS_KEY" ] && [ -n "$IA_SECRET_KEY" ]; then
-            AUTH_HEADER="-H \"Authorization: LOW ${IA_ACCESS_KEY}:${IA_SECRET_KEY}\""
-          fi
-
-          eval curl -s -X POST "https://web.archive.org/save" \
-            $AUTH_HEADER \
-            -H \'Accept: application/json\' \
-            -H \'Content-Type: application/x-www-form-urlencoded\' \
-            -d "url=https://res.id.au" \
-            -d "capture_outlinks=1" \
-            -d "capture_screenshot=1" \
-            -d "skip_first_archive=1" \
-            -d "if_not_archived_within=1d" || true
-
   deploy-s3:
-    name: Deploy to S3
+    name: Deploy to Prod
     needs: build
     runs-on: ubuntu-latest
     # S3_BUCKET, AWS_REGION, AWS_ROLE_ARN, CLOUDFRONT_DISTRIBUTION_ID and S3_WEBSITE_URL
@@ -186,6 +156,10 @@ jobs:
     permissions:
       contents: read
       id-token: write # Required for AWS OIDC authentication
+    env:
+      INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+      IA_ACCESS_KEY: ${{ secrets.IA_ACCESS_KEY }}
+      IA_SECRET_KEY: ${{ secrets.IA_SECRET_KEY }}
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -238,3 +212,31 @@ jobs:
             --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" \
             --id "$INVALIDATION_ID"
           echo "Invalidation $INVALIDATION_ID completed."
+
+      # IndexNow and the Wayback Machine target the production site (res.id.au),
+      # so they run here after the live content and CloudFront cache are updated.
+      - name: Submit URLs to IndexNow
+        if: ${{ env.INDEXNOW_KEY != '' }}
+        uses: bojieyang/indexnow-action@v2
+        with:
+          sitemap-location: 'https://res.id.au/sitemap.xml'
+          key: ${{ secrets.INDEXNOW_KEY }}
+          lastmod-required: false
+
+      - name: Archive to Wayback Machine
+        continue-on-error: true
+        run: |
+          AUTH_HEADER=""
+          if [ -n "$IA_ACCESS_KEY" ] && [ -n "$IA_SECRET_KEY" ]; then
+            AUTH_HEADER="-H \"Authorization: LOW ${IA_ACCESS_KEY}:${IA_SECRET_KEY}\""
+          fi
+
+          eval curl -s -X POST "https://web.archive.org/save" \
+            $AUTH_HEADER \
+            -H \'Accept: application/json\' \
+            -H \'Content-Type: application/x-www-form-urlencoded\' \
+            -d "url=https://res.id.au" \
+            -d "capture_outlinks=1" \
+            -d "capture_screenshot=1" \
+            -d "skip_first_archive=1" \
+            -d "if_not_archived_within=1d" || true
