@@ -1,4 +1,4 @@
-[![CI](https://github.com/rensaputra/res.id.au/actions/workflows/ci.yml/badge.svg)](https://github.com/rensaputra/res.id.au/actions/workflows/ci.yml) [![Deploy](https://github.com/rensaputra/res.id.au/actions/workflows/deploy.yml/badge.svg)](https://github.com/rensaputra/res.id.au/actions/workflows/deploy.yml) [![pages-build-deployment](https://github.com/rensaputra/res.id.au/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/rensaputra/res.id.au/actions/workflows/pages/pages-build-deployment)
+[![CI](https://github.com/rensaputra/res.id.au/actions/workflows/ci.yml/badge.svg)](https://github.com/rensaputra/res.id.au/actions/workflows/ci.yml) [![CD](https://github.com/rensaputra/res.id.au/actions/workflows/deploy.yml/badge.svg)](https://github.com/rensaputra/res.id.au/actions/workflows/deploy.yml)
 
 # Rendy's Portfolio Website
 
@@ -89,11 +89,11 @@ GitHub Pages is still deployed in parallel and serves a secondary copy at **`dev
 
 The workflow is split into three jobs:
 
-| Job            | Description                                                                                                                                                                     |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `build`        | Builds the site, adds the IndexNow key file, and uploads `build/` as a short-lived artifact.                                                                                    |
-| `deploy-pages` | Deploys to the `gh-pages` branch (preserving open PR previews), then submits to IndexNow and Wayback.                                                                           |
-| `deploy-s3`    | Runs in the `prod` [GitHub environment](https://docs.github.com/en/actions/deployment/targeting-different-environments), syncs the artifact to S3, then invalidates CloudFront. |
+| Job            | Description                                                                                                                                                                                                                                |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `build`        | Builds the site, adds the IndexNow key file, and uploads `build/` as a short-lived artifact.                                                                                                                                               |
+| `deploy-pages` | Deploys to the `gh-pages` branch (serving `dev.res.id.au`), preserving open PR previews.                                                                                                                                                   |
+| `deploy-s3`    | Runs in the `prod` [GitHub environment](https://docs.github.com/en/actions/deployment/targeting-different-environments), syncs the artifact to S3, invalidates CloudFront, then submits the live site to IndexNow and the Wayback Machine. |
 
 Both deploy jobs run in parallel after `build`, so a failure in one does not block the other. The S3 sync runs in two passes:
 
@@ -223,7 +223,7 @@ Each successful run is recorded under **Deployments** > **prod** on the reposito
 
 #### Running the S3 Deployment On Demand
 
-The workflow runs automatically on every push to `main`. It can also be triggered manually from **Actions** > **Deploy** > **Run workflow** (on the `main` branch). Leave **Only deploy to S3** ticked to skip the `deploy-pages` job (GitHub Pages, IndexNow and Wayback Machine), or untick it for a full deployment. Runs from other branches are skipped.
+The workflow runs automatically on every push to `main`. It can also be triggered manually from **Actions** > **Deploy** > **Run workflow** (on the `main` branch). Leave **Only deploy to S3** ticked to skip the `deploy-pages` job (the `dev.res.id.au` GitHub Pages deploy), or untick it for a full deployment. The `deploy-s3` job — including the CloudFront invalidation, IndexNow and Wayback submissions — always runs. Runs from other branches are skipped.
 
 Or with the GitHub CLI:
 
@@ -287,7 +287,7 @@ DNS for `res.id.au` is managed by Cloudflare.
 
 ### Wayback Machine Integration
 
-The deployment pipeline automatically submits the website to the [Internet Archive's Wayback Machine](https://web.archive.org/) after a successful deployment to ensure older versions of the notes are preserved.
+The `deploy-s3` job submits the production site (`res.id.au`) to the [Internet Archive's Wayback Machine](https://web.archive.org/) after the S3 sync and CloudFront invalidation complete, so the archived snapshot reflects the just-deployed content.
 
 This is performed asynchronously via a fire-and-forget `curl` request to the [Wayback Machine Save Page API](https://gist.github.com/regstuff/82e690db2f1d91ba59f6681c1abad6cf) to prevent the deployment workflow from blocking or failing due to rate limits.
 
@@ -298,7 +298,7 @@ To avoid heavy rate limiting from the Internet Archive, the request will conditi
 
 ### IndexNow Integration
 
-The deployment pipeline is configured to automatically submit updated URLs to search engines via the IndexNow protocol whenever a successful deployment occurs.
+The `deploy-s3` job submits updated URLs for the production site (`res.id.au`) to search engines via the IndexNow protocol, after the S3 sync and CloudFront invalidation so the submitted URLs are already live. The `build` job also writes the IndexNow key verification file into the site so it is served from both deployments.
 
 To enable this feature, you must configure a repository secret:
 
@@ -306,7 +306,7 @@ To enable this feature, you must configure a repository secret:
 2. Go to your GitHub repository **Settings** > **Secrets and variables** > **Actions**.
 3. Create a new repository secret named `INDEXNOW_KEY` and paste your key as the value.
 
-If the secret is not set, the IndexNow submission steps in the deployment workflow will simply be skipped.
+If the secret is not set, the IndexNow submission step and key file generation are skipped.
 
 ### Visitor Counter Integration
 
