@@ -79,6 +79,11 @@ jobs:
     # Skipped for manual runs with "s3_only" ticked.
     if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.s3_only) }}
     runs-on: ubuntu-latest
+    # Records this deploy under "Deployments > dev" with a link to the Pages site.
+    # Separate from the GitHub-managed "github-pages" environment.
+    environment:
+      name: dev
+      url: https://dev.res.id.au
     permissions:
       contents: write # Push to gh-pages
       pull-requests: read # List open PRs to keep their previews
