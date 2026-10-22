@@ -1,4 +1,10 @@
-name: Deploy to GitHub Pages
+name: Deploy
+
+# Manual runs show the deploy mode; pushes keep the commit message as the title.
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch'
+    && format('Manual deploy ({0}) by @{1}', inputs.s3_only && 'S3 only' || 'all targets', github.actor)
+    || github.event.head_commit.message }}
 
 on:
   push:
@@ -15,12 +21,14 @@ on:
 permissions:
   contents: read
 
+# Shared with pr-preview.yml: both push to the gh-pages branch, so they must not run concurrently.
 concurrency:
   group: deploy-gh-pages
   cancel-in-progress: false
 
 jobs:
   build:
+    name: Build site
     # Manual runs are only allowed from main so a feature branch can't overwrite production.
     # Deploy jobs depend on this one, so they are skipped too.
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -66,6 +74,7 @@ jobs:
           retention-days: 1
 
   deploy-pages:
+    name: Deploy to GitHub Pages
     needs: build
     # Skipped for manual runs with "s3_only" ticked.
     if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.s3_only) }}
@@ -163,6 +172,7 @@ jobs:
             -d "if_not_archived_within=1d" || true
 
   deploy-s3:
+    name: Deploy to S3
     needs: build
     runs-on: ubuntu-latest
     # S3_BUCKET, AWS_REGION, AWS_ROLE_ARN and S3_WEBSITE_URL are environment variables of "s3".

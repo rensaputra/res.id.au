@@ -17,12 +17,12 @@ Stephane's hands-on lab drops us straight into the live console engine rooms whe
   - Click **Create cache policy** to open the policy designer wizard window.
   - **TTL Bounds Engine**: Note how you possess absolute control over your asset lifespans via three explicit knobs: Minimum TTL, Maximum TTL, and Default TTL.
   - **Cache Key Settings**: Look at the granular whitelist filtering options. You can explicitly choose which HTTP headers, cookies, or tracking query parameters alter your primary Cache Key string.
-  - _The Security Reminder_: Anything whitelisted here modifies the cache storage key and automatically forwards straight down to your origin backend!
+  - _The Security Reminder_: Anything whitelisted here modifies the cache storage key and automatically forwards straight down to your origin backend!  
     ![](./img/cache-policy-builder.png)
 - **Build a Mock Origin Request Policy**
   - Close the cache policy wizard and click **Create origin request policy**.
   - Observe how the configuration fields look identical to the cache policy layout (Headers, Cookies, Query Strings).
-  - _The Golden Rule_: Whitelisting elements here appends them to your outbound origin request thread strictly _on a cache miss_, completely shielding your global Cache Key from fragmenting!
+  - _The Golden Rule_: Whitelisting elements here appends them to your outbound origin request thread strictly _on a cache miss_, completely shielding your global Cache Key from fragmenting!  
     ![](./img/origin-request-policy-builder.png)
 
 ### Phase 2: Simulating the Stale Cache Problem

@@ -1,4 +1,4 @@
-[![CI](https://github.com/rensaputra/res.id.au/actions/workflows/ci.yml/badge.svg)](https://github.com/rensaputra/res.id.au/actions/workflows/ci.yml) [![pages-build-deployment](https://github.com/rensaputra/res.id.au/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/rensaputra/res.id.au/actions/workflows/pages/pages-build-deployment)
+[![CI](https://github.com/rensaputra/res.id.au/actions/workflows/ci.yml/badge.svg)](https://github.com/rensaputra/res.id.au/actions/workflows/ci.yml) [![Deploy](https://github.com/rensaputra/res.id.au/actions/workflows/deploy.yml/badge.svg)](https://github.com/rensaputra/res.id.au/actions/workflows/deploy.yml) [![pages-build-deployment](https://github.com/rensaputra/res.id.au/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/rensaputra/res.id.au/actions/workflows/pages/pages-build-deployment)
 
 # Rendy's Portfolio Website
 
@@ -207,7 +207,7 @@ Each successful run is recorded under **Deployments** > **s3** on the repository
 
 #### Running the S3 Deployment On Demand
 
-The workflow runs automatically on every push to `main`. It can also be triggered manually from **Actions** > **Deploy to GitHub Pages** > **Run workflow** (on the `main` branch). Leave **Only deploy to S3** ticked to skip the `deploy-pages` job (GitHub Pages, IndexNow and Wayback Machine), or untick it for a full deployment. Runs from other branches are skipped.
+The workflow runs automatically on every push to `main`. It can also be triggered manually from **Actions** > **Deploy** > **Run workflow** (on the `main` branch). Leave **Only deploy to S3** ticked to skip the `deploy-pages` job (GitHub Pages, IndexNow and Wayback Machine), or untick it for a full deployment. Runs from other branches are skipped.
 
 Or with the GitHub CLI:
 
