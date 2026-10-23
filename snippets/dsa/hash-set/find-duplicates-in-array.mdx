@@ -1,0 +1,108 @@
+---
+sidebar_position: 2
+title: Find Duplicates in Array
+---
+
+Given an array of integers numbers, determine whether the array contains any duplicate values. A duplicate is defined as any number that appears more than once in the array.
+
+---
+
+## Input
+
+`numbers: number[]: An array of integers`
+
+---
+
+## Examples
+
+```
+Input: numbers = [5,7,1,3]
+Output: false
+Explanation: All elements in the array are unique.
+```
+
+```
+Input: numbers = [10,7,0,0,9]
+Output: true
+Explanation: 0 appears more than once.
+```
+
+```
+Input: numbers = [3,2,6,5,0,3,10,3,10,5]
+Output: true
+Explanation: 3,5, and 10 appears more than once.
+```
+
+---
+
+## Constraints
+
+- 1 &lt;= `numbers.length` &lt;= 10,000
+- -1,000,000 &lt;= `numbers[i]` &lt;= 1,000,000
+
+---
+
+## Solution
+
+### TypeScript
+
+<details>
+<summary>Click to expand</summary>
+
+```Typescript
+function containsDuplicate(numbers: number[]): boolean{
+    const seenNumbers = new Set<number>();
+
+    for(const number of numbers){
+        if(seenNumbers.has(number)){
+            return true;
+        }
+        seenNumbers.add(number);
+    }
+    return false;
+}
+```
+
+</details>
+
+<details>
+<summary>Big O Analysis</summary>
+
+- **Time Complexity**: O(n) - We iterate through the array once, performing constant-time operations for adding and checking elements in the `Set`.
+- **Space Complexity**: O(n) - The `Set` requires additional space to store `n` element in the worst case when all elements are unique.
+
+</details>
+
+### Java
+
+<details>
+<summary>Click to expand</summary>
+
+```Java
+import java.util.HashSet;
+import java.util.Set;
+
+public class Solution {
+    public boolean containsDuplicate(int[] numbers){
+        Set<Integer> seenNumbers = HashSet.newHashSet(numbers.length);
+
+        for(int number : numbers){
+            if(!seenNumbers.add(number)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+```
+
+</details>
+
+<details>
+<summary>Big O Analysis</summary>
+
+- **Time Complexity**: O(n) - We iterate through the array once, performing constant-time operations for adding and checking elements in the `Set`.
+- **Space Complexity**: O(n) - The `Set` requires additional space to store `n` element in the worst case when all elements are unique.
+
+</details>

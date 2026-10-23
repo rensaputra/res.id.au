@@ -137,6 +137,9 @@ jobs:
     # S3_BUCKET, AWS_REGION, AWS_ROLE_ARN, CLOUDFRONT_DISTRIBUTION_ID and S3_WEBSITE_URL
     # are environment variables of "prod".
     # Using an environment changes the OIDC subject to repo:<owner>/<repo>:environment:prod.
+    # Manual approval for prod is enforced by the "Required reviewers" protection rule
+    # on the "prod" environment (repo Settings > Environments), not here — GitHub keeps
+    # approval rules in settings so they can't be bypassed by editing this workflow.
     environment:
       name: prod
       url: ${{ steps.deploy.outputs.url }}

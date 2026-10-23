@@ -206,7 +206,7 @@ aws iam put-role-policy \
 
 1. Go to your GitHub repository **Settings** > **Environments** > **New environment** and name it `prod`.
 2. Under **Deployment branches and tags**, choose **Selected branches and tags** and add `main`. This prevents other branches from deploying to S3.
-3. Optionally enable **Required reviewers** or a **Wait timer** to gate each S3 deployment.
+3. Under **Required reviewers**, add at least one reviewer (yourself is fine). This requires manual approval before the `deploy-s3` job runs, so no production deploy happens without a human clicking **Approve**. Optionally add a **Wait timer** as well.
 4. Under **Environment variables**, add the following:
 
 | Variable                     | Example                                               | Description                                                             |
@@ -223,7 +223,7 @@ Each successful run is recorded under **Deployments** > **prod** on the reposito
 
 #### Running the Deployment
 
-The workflow runs automatically on every push to `main`. It builds the site, deploys to GitHub Pages (`dev.res.id.au`), then deploys to S3 (`prod`) — including the CloudFront invalidation, IndexNow and Wayback submissions. Runs from other branches are skipped.
+The workflow runs automatically on every push to `main`. It builds the site and deploys to GitHub Pages (`dev.res.id.au`) without interruption. The S3 (`prod`) deploy then waits for manual approval: because the `prod` environment has **Required reviewers** configured, the `deploy-s3` job pauses until a reviewer approves it from the run page (or **Deployments** > **prod**). Once approved, it deploys to S3 — including the CloudFront invalidation, IndexNow and Wayback submissions. Runs from other branches are skipped.
 
 ### CloudFront
 
