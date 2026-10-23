@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkres_id_au||=[]).push([[37089],{37089(e,r,c){c.d(r,{createArchitectureServices:()=>s.S});var s=c(45796);c(4954)}}]);
