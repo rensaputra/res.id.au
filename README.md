@@ -78,9 +78,12 @@ If you are using GitHub pages for hosting, this command is a convenient way to b
 
 ### Amazon S3 + CloudFront Deployment
 
-The production site at **`res.id.au`** is hosted on Amazon S3 and served through a CloudFront distribution. The deployment workflow (`.github/workflows/deploy.yml`) syncs the built site to the S3 bucket and invalidates the CloudFront cache. It authenticates with AWS using GitHub's OIDC provider, so no long-lived AWS access keys are stored in the repository.
+The deployment workflow (`.github/workflows/deploy.yml`) ships the site to two GitHub environments:
 
-GitHub Pages is still deployed in parallel and serves a secondary copy at **`dev.res.id.au`** (the domain is set by `static/CNAME`).
+- **Dev** is hosted on **GitHub Pages** and served at **`dev.res.id.au`** (the domain is set by `static/CNAME`). It also hosts the `pr-*` preview builds.
+- **Prod** is the production site at **`res.id.au`**, hosted on **Amazon S3** and served through a CloudFront distribution. The S3 sync authenticates with AWS using GitHub's OIDC provider, so no long-lived AWS access keys are stored in the repository.
+
+Dev is deployed first. The Prod deploy runs only after the Dev (GitHub Pages) deploy succeeds, and then waits for manual approval before going live — so changes are always visible on `dev.res.id.au` before they can reach production.
 
 | Hostname        | Hosted on       | Purpose                                   |
 | --------------- | --------------- | ----------------------------------------- |
@@ -95,7 +98,7 @@ The workflow is split into three jobs:
 | `deploy-pages` | Deploys to the `gh-pages` branch (serving `dev.res.id.au`), preserving open PR previews.                                                                                                                                                   |
 | `deploy-s3`    | Runs in the `prod` [GitHub environment](https://docs.github.com/en/actions/deployment/targeting-different-environments), syncs the artifact to S3, invalidates CloudFront, then submits the live site to IndexNow and the Wayback Machine. |
 
-Both deploy jobs run in parallel after `build`, so a failure in one does not block the other. The S3 sync runs in two passes:
+The deploy jobs run in sequence: `deploy-s3` has `needs: [build, deploy-pages]`, so Prod (S3) deploys only after Dev (GitHub Pages) succeeds, and the `prod` environment's required-reviewers rule gates it behind manual approval. The S3 sync runs in two passes:
 
 - `build/assets/` (hashed filenames) is uploaded with `Cache-Control: public, max-age=31536000, immutable`.
 - Everything else (HTML, sitemap, etc.) is uploaded with `Cache-Control: public, max-age=0, must-revalidate`.
