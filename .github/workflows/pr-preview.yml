@@ -22,6 +22,10 @@ jobs:
   deploy-preview:
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
+    # Previews are staging, so they embed the dev visitor-counter API URL.
+    # Declaring the `dev` environment scopes vars.VISITOR_COUNTER_API_BASE_URL
+    # to the dev value, matching dev.res.id.au where previews are served.
+    environment: dev
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

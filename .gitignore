@@ -34,7 +34,11 @@ node_modules/
 *.sln
 *.sw?
 
-# Local env files (keep .env.example tracked)
+# Local env files (keep the *.example files tracked)
 .env
 .env.local
+.env.dev
+.env.prod
 !.env.example
+!.env.dev.example
+!.env.prod.example

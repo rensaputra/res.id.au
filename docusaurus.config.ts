@@ -1,7 +1,18 @@
-// Load environment variables from a local .env file (if present) so that
-// build-time values like VISITOR_COUNTER_API_BASE_URL are available during
-// local development. In CI, these are provided by the workflow environment.
-import 'dotenv/config';
+// Load environment variables from a local env file so that build-time values
+// like VISITOR_COUNTER_API_BASE_URL are available during local development.
+//
+// The file is selected by APP_ENV (default 'dev'): `.env.${APP_ENV}` is tried
+// first, then a plain `.env` as a fallback. dotenv does not override variables
+// already present in process.env, so CI-injected values (set directly on the
+// build step) always win and these files are a local-only convenience. Missing
+// files are ignored silently.
+import * as dotenv from 'dotenv';
+import path from 'path';
+
+const appEnv = process.env.APP_ENV || 'dev';
+dotenv.config({ path: path.resolve(__dirname, `.env.${appEnv}`) });
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
 import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
