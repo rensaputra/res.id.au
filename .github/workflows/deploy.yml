@@ -59,12 +59,12 @@ jobs:
   # Runs only after the dev site is live on GitHub Pages, so changes are always
   # visible on dev.res.id.au before production is built. This is also the single
   # manual-approval gate: the `prod` environment's "Required reviewers" rule is
-  # enforced the first time the environment is entered, which is here. `deploy-s3`
+  # enforced the first time the environment is entered, which is here. `deploy-prod`
   # reuses the same environment but is not re-prompted within the same run.
   build-prod:
     name: Build site (prod)
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: deploy-pages
+    needs: deploy-dev
     runs-on: ubuntu-latest
     # Scopes vars.VISITOR_COUNTER_API_BASE_URL to the `prod` environment's value.
     # Entering the `prod` environment here triggers the single approval gate.
@@ -109,7 +109,7 @@ jobs:
           include-hidden-files: true
           retention-days: 1
 
-  deploy-pages:
+  deploy-dev:
     name: Deploy to Dev
     needs: build-dev
     runs-on: ubuntu-latest
@@ -182,9 +182,9 @@ jobs:
           publish_dir: ./build
           force_orphan: true
 
-  deploy-s3:
+  deploy-prod:
     name: Deploy to Prod
-    # Runs after the prod build. build-prod already chains through deploy-pages,
+    # Runs after the prod build. build-prod already chains through deploy-dev,
     # so the dev deploy is guaranteed to have succeeded first.
     needs: build-prod
     runs-on: ubuntu-latest
