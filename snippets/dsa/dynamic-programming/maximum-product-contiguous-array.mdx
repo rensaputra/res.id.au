@@ -1,0 +1,124 @@
+---
+sidebar_position: 2
+title: Maximum Product in Contiguous Array
+---
+
+Given an array of integers `numbers`, determine the subarray that has the highest product and return that product.
+
+A **subarray** is a contiguous segment of an array where all elements are taken from consecutive indices, preserving their order, such as `[2, 3]` in `[1, 2, 3, 4]`, while non-contiguous selections like `[1, 3]` are not valid subarray.
+
+## Input
+
+- `numbers: number[]`: An array of integers
+
+## Notes
+
+- The test cases are designed such that the result will fit within a 32-bit integer
+- The product of any prefix or suffix of `numbers` is guaranteed to fit in a 32-bit integer
+
+## Examples
+
+```
+Input: numbers = [1,2,-3,5,1]
+Output: 5
+Explanation: The subarray [5, 1] has the largest product i.e 5.
+```
+
+```
+Input: numbers = [9]
+Output: 9
+Explanation: The single-element subarray [9] has the largest product i.e 9.
+```
+
+```
+Input: numbers = [1,2,0,-1,8,-4]
+Output: 32
+Explanation: The subarray [-1, 8, -4] has the largest product i.e 32.
+```
+
+## Constraints
+
+- 1 &lt;= `numbers.length` &lt;= 1,000
+- -10 &lt;= `numbers[i]` &lt;= 10
+
+## Solution
+
+### TypeScript
+
+<details>
+<summary>Click to expand</summary>
+
+```Typescript
+export default function maxProductSubArray(numbers: number[]): number{
+    if (numbers.length === 0) return 0;
+
+    let maxSoFar = numbers[0];
+    let minSoFar = numbers[0];
+    let result = maxSoFar;
+
+    for(let i = 1 ; i < numbers.length ; i++){
+        const curr = numbers[i];
+
+        const tempMax = Math.max(curr, maxSoFar * curr, minSoFar * curr);
+        minSoFar = Math.min(curr, maxSoFar * curr, minSoFar * curr);
+        maxSoFar = tempMax;
+        result = Math.max(result, maxSoFar);
+    }
+
+    return result;
+}
+```
+
+</details>
+
+<details>
+<summary>Big O Analysis</summary>
+
+- **Time Complexity**: O(n) - We iterate through the array once.
+- **Space Complexity**: O(1) - We use a constant amount of extra space
+
+</details>
+
+### Java
+
+<details>
+<summary>Click to Expand</summary>
+
+```Java
+class Solution{
+    public int maxProductSubArray(int[] numbers){
+        if (numbers.length == 0) return 0;
+
+        int maxSoFar = numbers[0];
+        int minSoFar = numbers[0];
+        int result = maxSoFar;
+
+        for(int i = 1 ; i < numbers.length ; i++){
+            int curr = numbers[i];
+
+            int tempMax = Math.max(curr, Math.max(maxSoFar * curr, minSoFar * curr));
+            minSoFar = Math.min(curr, Math.min(maxSoFar * curr, minSoFar * curr));
+            maxSoFar = tempMax;
+
+            result = Math.max(result, maxSoFar);
+        }
+
+        return result;
+    }
+}
+```
+
+</details>
+
+<details>
+<summary>Big O Analysis</summary>
+
+- **Time Complexity**: O(n) - We iterate through the array once.
+- **Space Complexity**: O(1) - We use a constant amount of extra space
+
+</details>
+
+## References
+
+- GreatFrontEnd - Maximum Product in Contiguous Array
+- LeetCode - Maximum Product Subarray

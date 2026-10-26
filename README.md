@@ -83,22 +83,23 @@ The deployment workflow (`.github/workflows/deploy.yml`) ships the site to two G
 - **Dev** is hosted on **GitHub Pages** and served at **`dev.res.id.au`** (the domain is set by `static/CNAME`). It also hosts the `pr-*` preview builds.
 - **Prod** is the production site at **`res.id.au`**, hosted on **Amazon S3** and served through a CloudFront distribution. The S3 sync authenticates with AWS using GitHub's OIDC provider, so no long-lived AWS access keys are stored in the repository.
 
-Dev is deployed first. The Prod deploy runs only after the Dev (GitHub Pages) deploy succeeds, and then waits for manual approval before going live — so changes are always visible on `dev.res.id.au` before they can reach production.
+Dev is deployed first. The Prod build runs only after the Dev (GitHub Pages) deploy succeeds, and it waits for manual approval before building — so changes are always visible on `dev.res.id.au` before they can reach production.
 
 | Hostname        | Hosted on       | Purpose                                   |
 | --------------- | --------------- | ----------------------------------------- |
 | `res.id.au`     | S3 + CloudFront | Canonical production site                 |
 | `dev.res.id.au` | GitHub Pages    | Secondary copy and `pr-*` preview staging |
 
-The workflow is split into three jobs:
+The workflow is split into four jobs:
 
-| Job            | Description                                                                                                                                                                                                                                |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `build`        | Builds the site, adds the IndexNow key file, and uploads `build/` as a short-lived artifact.                                                                                                                                               |
-| `deploy-pages` | Deploys to the `gh-pages` branch (serving `dev.res.id.au`), preserving open PR previews.                                                                                                                                                   |
-| `deploy-s3`    | Runs in the `prod` [GitHub environment](https://docs.github.com/en/actions/deployment/targeting-different-environments), syncs the artifact to S3, invalidates CloudFront, then submits the live site to IndexNow and the Wayback Machine. |
+| Job           | Description                                                                                                                                                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `build-dev`   | Builds the site in the `dev` [GitHub environment](https://docs.github.com/en/actions/deployment/targeting-different-environments) (embedding the dev visitor-counter API URL) and uploads `build/` as the `site-dev` artifact. |
+| `deploy-dev`  | Deploys the `site-dev` artifact to the `gh-pages` branch (serving `dev.res.id.au`), preserving open PR previews.                                                                                                               |
+| `build-prod`  | Builds the site in the `prod` environment (embedding the prod visitor-counter API URL), adds the IndexNow key file, and uploads `build/` as the `site-prod` artifact. This is the manual-approval gate.                        |
+| `deploy-prod` | Runs in the `prod` environment, syncs the `site-prod` artifact to S3, invalidates CloudFront, then submits the live site to IndexNow and the Wayback Machine.                                                                  |
 
-The deploy jobs run in sequence: `deploy-s3` has `needs: [build, deploy-pages]`, so Prod (S3) deploys only after Dev (GitHub Pages) succeeds, and the `prod` environment's required-reviewers rule gates it behind manual approval. The S3 sync runs in two passes:
+The jobs run in a single chain: `deploy-dev` has `needs: build-dev`, `build-prod` has `needs: deploy-dev`, and `deploy-prod` has `needs: build-prod`. So Dev (GitHub Pages) always goes live before Prod is even built, and `build-prod` → `deploy-prod` run only after that. The `prod` environment's required-reviewers rule gates `build-prod` behind manual approval. Because `deploy-prod` reuses the same `prod` environment, GitHub does not prompt a second time within the run — there is exactly one approval per run, at `build-prod`. The S3 sync runs in two passes:
 
 - `build/assets/` (hashed filenames) is uploaded with `Cache-Control: public, max-age=31536000, immutable`.
 - Everything else (HTML, sitemap, etc.) is uploaded with `Cache-Control: public, max-age=0, must-revalidate`.
@@ -209,7 +210,7 @@ aws iam put-role-policy \
 
 1. Go to your GitHub repository **Settings** > **Environments** > **New environment** and name it `prod`.
 2. Under **Deployment branches and tags**, choose **Selected branches and tags** and add `main`. This prevents other branches from deploying to S3.
-3. Under **Required reviewers**, add at least one reviewer (yourself is fine). This requires manual approval before the `deploy-s3` job runs, so no production deploy happens without a human clicking **Approve**. Optionally add a **Wait timer** as well.
+3. Under **Required reviewers**, add at least one reviewer (yourself is fine). This requires manual approval before the `deploy-prod` job runs, so no production deploy happens without a human clicking **Approve**. Optionally add a **Wait timer** as well.
 4. Under **Environment variables**, add the following:
 
 | Variable                     | Example                                               | Description                                                             |
@@ -226,7 +227,7 @@ Each successful run is recorded under **Deployments** > **prod** on the reposito
 
 #### Running the Deployment
 
-The workflow runs automatically on every push to `main`. It builds the site and deploys to GitHub Pages (`dev.res.id.au`) without interruption. The S3 (`prod`) deploy then waits for manual approval: because the `prod` environment has **Required reviewers** configured, the `deploy-s3` job pauses until a reviewer approves it from the run page (or **Deployments** > **prod**). Once approved, it deploys to S3 — including the CloudFront invalidation, IndexNow and Wayback submissions. Runs from other branches are skipped.
+The workflow runs automatically on every push to `main`. It builds the dev site and deploys it to GitHub Pages (`dev.res.id.au`) without interruption. Production then waits for manual approval: because the `prod` environment has **Required reviewers** configured, the `build-prod` job pauses until a reviewer approves it from the run page (or **Deployments** > **prod**). Once approved, `build-prod` builds the production site and `deploy-prod` syncs it to S3 — including the CloudFront invalidation, IndexNow and Wayback submissions — with no second approval prompt, since both jobs share the `prod` environment. Runs from other branches are skipped.
 
 ### CloudFront
 
@@ -268,7 +269,7 @@ Because the bucket policy does not grant `s3:ListBucket`, S3 returns `403 Access
 
 #### Cache invalidation
 
-After each S3 sync, the `deploy-s3` job runs `aws cloudfront create-invalidation --paths "/*"` and waits for it to complete, so new HTML is served immediately instead of waiting for edge TTLs to expire. Hashed assets under `assets/` are immutable and would not strictly need invalidating, but a single `/*` invalidation counts as one path against the monthly free tier (1,000 paths) and keeps the step simple.
+After each S3 sync, the `deploy-prod` job runs `aws cloudfront create-invalidation --paths "/*"` and waits for it to complete, so new HTML is served immediately instead of waiting for edge TTLs to expire. Hashed assets under `assets/` are immutable and would not strictly need invalidating, but a single `/*` invalidation counts as one path against the monthly free tier (1,000 paths) and keeps the step simple.
 
 The step is skipped when `CLOUDFRONT_DISTRIBUTION_ID` is not set, and it requires the `cloudfront:CreateInvalidation` and `cloudfront:GetInvalidation` permissions added to the IAM role above.
 
@@ -284,7 +285,7 @@ DNS for `res.id.au` is managed by Cloudflare.
 
 ### Wayback Machine Integration
 
-The `deploy-s3` job submits the production site (`res.id.au`) to the [Internet Archive's Wayback Machine](https://web.archive.org/) after the S3 sync and CloudFront invalidation complete, so the archived snapshot reflects the just-deployed content.
+The `deploy-prod` job submits the production site (`res.id.au`) to the [Internet Archive's Wayback Machine](https://web.archive.org/) after the S3 sync and CloudFront invalidation complete, so the archived snapshot reflects the just-deployed content.
 
 This is performed asynchronously via a fire-and-forget `curl` request to the [Wayback Machine Save Page API](https://gist.github.com/regstuff/82e690db2f1d91ba59f6681c1abad6cf) to prevent the deployment workflow from blocking or failing due to rate limits.
 
@@ -295,7 +296,7 @@ To avoid heavy rate limiting from the Internet Archive, the request will conditi
 
 ### IndexNow Integration
 
-The `deploy-s3` job submits updated URLs for the production site (`res.id.au`) to search engines via the IndexNow protocol, after the S3 sync and CloudFront invalidation so the submitted URLs are already live. The `build` job also writes the IndexNow key verification file into the site so it is served from both deployments.
+The `deploy-prod` job submits updated URLs for the production site (`res.id.au`) to search engines via the IndexNow protocol, after the S3 sync and CloudFront invalidation so the submitted URLs are already live. The `build-prod` job also writes the IndexNow key verification file into the production build.
 
 To enable this feature, you must configure a repository secret:
 
@@ -311,16 +312,30 @@ The homepage Hero component displays a visitor counter backed by a REST API (AWS
 
 > **Note:** Keep the trailing slash on the URL. The staged API Gateway endpoint requires it to resolve.
 
-**Local development:** copy `.env.example` to `.env` and set the value. The `.env` file is loaded automatically via `dotenv`:
+The URL resolves **per environment** so dev and prod can point at different backends. `docusaurus.config.ts` reads `APP_ENV` (defaulting to `dev`), then loads `.env.${APP_ENV}` followed by `.env` as a fallback — without overriding a value already injected by CI. PR previews build with `APP_ENV=dev`, so they use the dev API.
+
+**Local development:** copy the per-environment example files and fill in the real URLs:
 
 ```bash
-cp .env.example .env
+cp .env.dev.example .env.dev    # dev API URL
+cp .env.prod.example .env.prod  # prod API URL
 ```
 
-**GitHub Actions:** define the variable so the deployment build points at the correct backend:
+The dev scripts are the default; append `:prod` to run or build against the prod URL:
 
-1. Go to your GitHub repository **Settings** > **Secrets and variables** > **Actions**.
-2. Open the **Variables** tab and click **New repository variable**.
-3. Name it `VISITOR_COUNTER_API_BASE_URL` and set the value to your API base URL (including the trailing slash).
+```bash
+npm start           # APP_ENV=dev
+npm run build       # APP_ENV=dev
+npm run start:prod  # APP_ENV=prod
+npm run build:prod  # APP_ENV=prod
+```
 
-If the variable is not set, the build falls back to the default stage defined in `docusaurus.config.ts`.
+The real `.env.dev` / `.env.prod` files are gitignored; only the `*.example` templates are tracked.
+
+**GitHub Actions:** `build-dev` runs in the `dev` environment and `build-prod` runs in the `prod` environment, so each build embeds that environment's value. Define the variable in **both** environments:
+
+1. Go to your GitHub repository **Settings** > **Environments**.
+2. Open the **`dev`** environment, add an environment variable named `VISITOR_COUNTER_API_BASE_URL`, and set it to the dev API base URL (including the trailing slash).
+3. Repeat for the **`prod`** environment, setting it to the prod API base URL.
+
+The dev/prod split only takes effect once both environments define the variable. If it is not set, the build falls back to the default stage defined in `docusaurus.config.ts`.

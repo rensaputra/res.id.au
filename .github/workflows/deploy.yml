@@ -10,14 +10,16 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build site
+  # Dev build: embeds the dev visitor-counter API URL (from the `dev` environment)
+  # and feeds the GitHub Pages (dev.res.id.au) deploy.
+  build-dev:
+    name: Build site (dev)
     # Only build from main so a feature branch can't overwrite production.
     # Deploy jobs depend on this one, so they are skipped too.
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
-    env:
-      INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+    # Scopes vars.VISITOR_COUNTER_API_BASE_URL to the `dev` environment's value.
+    environment: dev
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -42,6 +44,57 @@ jobs:
           LAST_BUILD_DATE: ${{ env.LAST_BUILD_DATE }}
           VISITOR_COUNTER_API_BASE_URL: ${{ vars.VISITOR_COUNTER_API_BASE_URL }}
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-dev
+          path: build
+          include-hidden-files: true
+          retention-days: 1
+
+  # Prod build: embeds the prod visitor-counter API URL (from the `prod`
+  # environment) and feeds the S3 (res.id.au) deploy. The IndexNow key file is
+  # written here because IndexNow targets the production site.
+  #
+  # Runs only after the dev site is live on GitHub Pages, so changes are always
+  # visible on dev.res.id.au before production is built. This is also the single
+  # manual-approval gate: the `prod` environment's "Required reviewers" rule is
+  # enforced the first time the environment is entered, which is here. `deploy-prod`
+  # reuses the same environment but is not re-prompted within the same run.
+  build-prod:
+    name: Build site (prod)
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: deploy-dev
+    runs-on: ubuntu-latest
+    # Scopes vars.VISITOR_COUNTER_API_BASE_URL to the `prod` environment's value.
+    # Entering the `prod` environment here triggers the single approval gate.
+    environment: prod
+    env:
+      INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set Last Build Date
+        run: echo "LAST_BUILD_DATE=$(TZ=Australia/Sydney date +"%Y-%m-%dT%H:%M:%S%z")" >> $GITHUB_ENV
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build website
+        run: npm run build:prod
+        env:
+          LAST_BUILD_DATE: ${{ env.LAST_BUILD_DATE }}
+          VISITOR_COUNTER_API_BASE_URL: ${{ vars.VISITOR_COUNTER_API_BASE_URL }}
+
       - name: Generate IndexNow key file
         if: ${{ env.INDEXNOW_KEY != '' }}
         run: |
@@ -51,14 +104,14 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: site
+          name: site-prod
           path: build
           include-hidden-files: true
           retention-days: 1
 
-  deploy-pages:
+  deploy-dev:
     name: Deploy to Dev
-    needs: build
+    needs: build-dev
     runs-on: ubuntu-latest
     # Shared with pr-preview.yml: both push to the gh-pages branch, so they must
     # not run concurrently. Scoped to this job only so S3 deploys are never
@@ -84,7 +137,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: site
+          name: site-dev
           path: build
 
       - name: Checkout gh-pages branch
@@ -129,17 +182,19 @@ jobs:
           publish_dir: ./build
           force_orphan: true
 
-  deploy-s3:
+  deploy-prod:
     name: Deploy to Prod
-    # Runs after both build and the Pages deploy succeed.
-    needs: [build, deploy-pages]
+    # Runs after the prod build. build-prod already chains through deploy-dev,
+    # so the dev deploy is guaranteed to have succeeded first.
+    needs: build-prod
     runs-on: ubuntu-latest
     # S3_BUCKET, AWS_REGION, AWS_ROLE_ARN, CLOUDFRONT_DISTRIBUTION_ID and S3_WEBSITE_URL
     # are environment variables of "prod".
     # Using an environment changes the OIDC subject to repo:<owner>/<repo>:environment:prod.
-    # Manual approval for prod is enforced by the "Required reviewers" protection rule
-    # on the "prod" environment (repo Settings > Environments), not here — GitHub keeps
-    # approval rules in settings so they can't be bypassed by editing this workflow.
+    # Manual approval is enforced by the "prod" environment's "Required reviewers"
+    # rule, but it was already satisfied when build-prod entered the environment
+    # earlier in this run — GitHub does not re-prompt for the same environment, so
+    # there is a single approval gate per run (at build-prod).
     environment:
       name: prod
       url: ${{ steps.deploy.outputs.url }}
@@ -154,7 +209,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: site
+          name: site-prod
           path: build
 
       - name: Configure AWS credentials
