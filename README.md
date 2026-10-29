@@ -128,7 +128,7 @@ aws iam create-open-id-connect-provider \
 
 Create a role (e.g. `GithubActionDeployS3`) that GitHub Actions can assume.
 
-**Trust policy:** allows only jobs running in the `prod` environment of this repository to assume the role. Replace `<ACCOUNT_ID>` with your AWS account ID:
+**Trust policy:** allows only jobs running in the `prod` environment of this repository to assume the role. Replace `<ACCOUNT_ID>` with your AWS account ID, and `<OWNER_ID>` / `<REPO_ID>` with the numeric IDs for your account and repository (see below):
 
 ```json
 {
@@ -143,7 +143,7 @@ Create a role (e.g. `GithubActionDeployS3`) that GitHub Actions can assume.
       "Condition": {
         "StringEquals": {
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-          "token.actions.githubusercontent.com:sub": "repo:rensaputra/res.id.au:environment:prod"
+          "token.actions.githubusercontent.com:sub": "repo:rensaputra@<OWNER_ID>/res.id.au@<REPO_ID>:environment:prod"
         }
       }
     }
@@ -151,7 +151,14 @@ Create a role (e.g. `GithubActionDeployS3`) that GitHub Actions can assume.
 }
 ```
 
-> **Note:** When a job uses a GitHub environment, the OIDC `sub` claim is `repo:<owner>/<repo>:environment:<name>` instead of `repo:<owner>/<repo>:ref:refs/heads/main`. The branch restriction is enforced by the environment's deployment branch rule (see step 3) rather than by IAM. If the `sub` doesn't match, the job fails with `Not authorized to perform sts:AssumeRoleWithWebIdentity`.
+> **Note:** This uses GitHub's [immutable subject claim](https://docs.github.com/en/actions/reference/security/oidc) format, which embeds the numeric owner ID and repository ID in the `sub`. GitHub makes this the default for repositories created after 15 July 2026, and for any repository that is renamed, transferred, or opts in — the embedded IDs survive renames, which is the point of the format. The older name-only subject (`repo:rensaputra/res.id.au:environment:prod`) no longer applies to this repository, so the policy must match the immutable string exactly. When a job uses a GitHub environment, the subject ends in `:environment:<name>` rather than `:ref:refs/heads/main`; the branch restriction is enforced by the environment's deployment branch rule (see step 3) rather than by IAM. If the `sub` doesn't match, the job fails with `Not authorized to perform sts:AssumeRoleWithWebIdentity`.
+
+Look up the numeric IDs with the GitHub CLI (or the REST API):
+
+```bash
+gh api /users/rensaputra --jq .id          # <OWNER_ID>
+gh api /repos/rensaputra/res.id.au --jq .id # <REPO_ID>
+```
 
 To update the trust policy of an existing role:
 
