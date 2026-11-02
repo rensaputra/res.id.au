@@ -1,0 +1,130 @@
+---
+sidebar_position: 2
+title: Most Common Elements
+---
+
+Given an array of integers `numbers` and a number `k`, find the k most frequent numbers in the array. Here, `k` represents the number of elements that should be returned, which are the ones that appear the most frequently. The order of the result does not matter.
+
+## Input
+
+- `numbers: number[]`: An array of integers
+- `k`: An integer
+
+## Examples
+
+```
+Input: numbers = [4,4,4,6,6,5,5,5], k = 2
+Output: [4,5]
+Explanation: The two most frequent numbers are 4 and 5, as they appear the most often in the array.
+```
+
+```
+Input: numbers = [7,7,7,8,8,9,9,9], k = 3
+Output: [7,9,8]
+Explanation: The three most frequent numbers are 7, 9, and 8.
+```
+
+```
+Input: numbers = [10,10,10,10,10], k = 1
+Output: [10]
+Explanation: Since there is only one unique number, 10, it is the most frequent.
+```
+
+## Constraints
+
+- 1 &lt;= `numbers.length` &lt;= 1,000
+- -10,000 &lt;= `numbers[i]` &lt;= 10,000
+- 1 &lt;= `k` &lt;= Number of unique elements in the array
+- The solution is guaranteed to have a unique result
+
+## Solution
+
+### TypScript
+
+<details>
+<summary>Click to expand</summary>
+```typescript
+export default function mostCommonElements(numbers: number[], k: number): number[] {
+  const countMap = new Map<number, number>();
+  const result: number[] = [];
+
+for (const n of numbers) {
+countMap.set(n, (countMap.get(n) ?? 0) + 1);
+}
+
+const buckets: number[][] = Array.from({ length: numbers.length + 1 }, () => []);
+
+for (const [num, freq] of countMap) {
+buckets[freq].push(num);
+}
+
+for (let i = buckets.length - 1; i >= 0 && result.length < k; i--) {
+const bucket = buckets[i];
+for (const num of bucket) {
+result.push(num);
+if (k === 0) return result;
+}
+}
+
+return result;
+}
+
+````
+</details>
+
+<details>
+<summary>Big O Analysis</summary>
+- Time Complexity: O(n), where n is the length of the input array `numbers`. We iterate through the array to count frequencies and then iterate through the buckets to collect the most common elements.
+- Space Complexity: O(n), where n is the number of unique elements in the input array. We use a map to store the frequency counts and an array of buckets to group numbers by their frequencies.
+</details>
+
+
+### Java
+
+<details>
+<summary>Click to expand</summary>
+```java
+public class Solution {
+    public int[] mostCommonElements(int[] numbers, int k) {
+        Map<Integer, Integer> countMap = new HashMap<>();
+        int[] result = new int[k];
+
+        for (int i = 0; i < numbers.length; i++) {
+            countMap.put(numbers[i], countMap.getOrDefault(numbers[i], 0) + 1);
+        }
+
+        List<Integer>[] buckets = new List[numbers.length + 1];
+        for (int i = 0; i < buckets.length; i++) {
+            buckets[i] = new ArrayList<>();
+        }
+
+        for (Map.Entry<Integer, Integer> entry : countMap.entrySet()) {
+            int num = entry.getKey();
+            int freq = entry.getValue();
+            buckets[freq].add(num);
+        }
+
+        int index = 0;
+        for (int i = buckets.length - 1; i >= 0 && index < k; i--) {
+            List<Integer> list = buckets[i];
+            for (int num : list) {
+                result[index++] = num;
+                if (index == k)
+                    return result;
+            }
+        }
+
+        return result;
+    }
+}
+````
+
+</details>
+
+<details>
+<summary>Big O Analysis</summary>
+
+- Time Complexity: O(n), where n is the length of the input array `numbers`. We iterate through the array to count frequencies and then iterate through the buckets to collect the most common elements.
+- Space Complexity: O(n), where n is the number of unique elements in the input array. We use a map to store the frequency counts and an array of buckets to group numbers by their frequencies.
+
+</details>
