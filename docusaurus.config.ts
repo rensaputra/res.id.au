@@ -241,6 +241,8 @@ const config: Config = {
           //editUrl: 'https://github.com/rensaputra/res.id.au/tree/main/',
         },
         blog: {
+          remarkPlugins: [remarkMath],
+          rehypePlugins: [rehypeKatex],
           showReadingTime: true,
           feedOptions: {
             type: ['rss', 'atom'],
